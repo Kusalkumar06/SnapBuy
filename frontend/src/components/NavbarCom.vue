@@ -14,22 +14,19 @@
     </nav>
 
     <div class="flex items-center space-x-4">
-
-      <div class="flex border-1 rounded-[5px] bg-gray-100">
-        <button class="pl-3 text-gray-500 hover:text-gray-700">
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-          </svg>
-        </button>
-        <input type="text" placeholder="search for products" class="text-[12px] px-3 py-1 focus:outline-none"/>
-      </div>
-
-      <router-link :to="{ name: 'cart' }" class="text-xl hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-[10px]" aria-label="Shopping Cart" >🛒</router-link>
-
+      <button @click="openCart" class="text-xl hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-[10px]" aria-label="Shopping Cart" >🛒</button>
+      <CartPage/>
     </div>
 
   </header>
 </template>
 
 <script setup>
+import { useCartStore } from '@/stores/cartStore';
+import CartPage from '@/pages/CartPage.vue';
+
+const cartStore = useCartStore();
+function openCart() {
+  cartStore.openCart();
+}
 </script>

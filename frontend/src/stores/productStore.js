@@ -1,10 +1,12 @@
+import products from "@/products";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useProductStore = defineStore('productStore',()=>{
+  const productsList = ref(products)
   const categories = ref([
-    "Electronics",
     "Fashion & Apparel",
+    "Electronics",
     "Home & Kitchen",
     "Beauty & Personal Care",
     "Sports & Fitness"
@@ -16,5 +18,5 @@ export const useProductStore = defineStore('productStore',()=>{
     "Beauty & Personal Care": "Explore our beauty & personal care collection",
     "Sports & Fitness": "Explore our sports & fitness collection"
   })
-  return {categories, categoryTexts}
+  return {categories, categoryTexts, productsList}
 })

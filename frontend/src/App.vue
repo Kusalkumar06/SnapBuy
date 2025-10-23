@@ -6,7 +6,7 @@
   <div>
     <Navbar/>
   </div>
-  <div class="mt-[100px]">
+  <div class="mt-[60px]">
     <router-view></router-view>
   </div>
 </template>
