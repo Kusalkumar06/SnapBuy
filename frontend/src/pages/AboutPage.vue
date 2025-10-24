@@ -29,7 +29,7 @@
         </div>
 
         <div class="flex-1 rounded-lg h-96 overflow-hidden">
-          <img src="" alt="SnapBuy Store" class="w-full h-full object-cover" />
+          <img src="https://www.48hourslogo.com/48hourslogo_data/2019/06/20/85800_1560969346.png" alt="SnapBuy Store" class="w-full h-full object-cover" />
         </div>
       </div>
 
