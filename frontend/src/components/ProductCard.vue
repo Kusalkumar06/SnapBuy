@@ -1,4 +1,8 @@
 <script setup>
+  import { useCartStore } from '@/stores/cartStore';
+
+  const cartStore = useCartStore();
+
   const { productDetails } = defineProps({
     productDetails: Object,
   })
@@ -19,7 +23,7 @@
       <h1 class="font-semibold text-[#2e251f]">{{ productDetails.title }}</h1>
       <p class="text-gray-600 my-1 font-[500]">₹{{ (productDetails.price*3).toFixed(2) }}    <span class="text-[12px] line-through">₹{{ (productDetails.price*4).toFixed(2) }}</span></p>
       <div class="text-center">
-        <button type="button" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
+        <button type="button" @click="cartStore.addToCart(productDetails._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
       </div>
     </div>
   </div>

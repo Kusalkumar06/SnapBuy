@@ -19,10 +19,12 @@
 </template>
 
 <script setup>
-import {reactive,provide } from 'vue'
+import {reactive,provide,onMounted } from 'vue'
 import FilterCom from '@/components/FilterCom.vue'
-// import productsList from '@/products'
 import ProductCom from '@/components/ProductCom.vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
   const filters = reactive({
     search: "",
@@ -34,5 +36,13 @@ import ProductCom from '@/components/ProductCom.vue'
   })
 
   provide('filters', filters)
+
+  onMounted(() => {
+  console.log(route.query)
+  if (route.query.category) {
+    filters.category = route.query.category
+  }
+})
+
 
 </script>

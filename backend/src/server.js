@@ -2,14 +2,14 @@ import express from "express"
 import { connectDB } from "./config/db.js"
 import "dotenv/config"
 import cors from "cors"
-import cookieParser from "cookie-parser"
+import authRouter from "./routes/authRoutes.js"
+import productRouter from "./routes/productRoutes.js"
+import cartRouter from "./routes/cartRoues.js"
+
 
 const app = express()
 
-app.use(cors({
-  origin : ["http://localhost:5173"],
-  credentials : true,
-}))
+app.use(cors())
 
 app.use(express.json())
 
@@ -34,3 +34,9 @@ const main = async() => {
 }
 
 main()
+
+app.use('/auth/', authRouter)
+
+app.use('/product/', productRouter)
+
+app.use('/cart/', cartRouter)

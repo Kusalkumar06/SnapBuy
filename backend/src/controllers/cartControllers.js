@@ -4,9 +4,9 @@ import { ProductModel } from "../models/ProductModel.js";
 
 export const getCart = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const cart = await CartModel.findOne({ user: userId })
-      .populate("items.product", "title price image category");
+      .populate("items.product", "title price image category description");
 
     if (!cart) {
       return res.status(404).json({
@@ -45,7 +45,7 @@ const calculateCartTotal = async (items) => {
 
 export const addToCart = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { productId } = req.body;
 
     let cart = await CartModel.findOne({ user: userId });
@@ -67,13 +67,13 @@ export const addToCart = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error:error });
   }
 };
 
 export const decreaseCartItem = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { productId } = req.body;
 
     let cart = await CartModel.findOne({ user: userId });
@@ -103,7 +103,7 @@ export const decreaseCartItem = async (req, res) => {
 
 export const clearCart = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const cart = await CartModel.findOne({ user: userId });
     if (!cart) {

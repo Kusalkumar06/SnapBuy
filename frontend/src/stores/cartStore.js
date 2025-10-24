@@ -1,82 +1,112 @@
 import { defineStore } from 'pinia'
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useToast } from 'vue-toastification';
 
-export const useCartStore = defineStore('cart', {
+export const useCartStore = defineStore('cartStore', {
   state: () => ({
-    cartItems: [{
-        "_id": "7517c1b94f1d342a3cd9e902",
-        "product": {
-          "_id": "6517a2f14f1d342a3cd9e8f5",
-          "title": "Smart Fitness Watch",
-          "price": 249,
-          "category": "Electronics",
-          "image": "https://cdn.thewirecutter.com/wp-content/media/2025/09/BEST-MENS-WHITE-TEES-SUB-2048px-5935.jpg?auto=webp&quality=75&width=1024"
-        },
-        "quantity": 1
-      },
-      {
-        "_id": "7517c1b94f1d342a3cd9e902",
-        "product": {
-          "_id": "6517a2f14f1d342a3cd9e8f5",
-          "title": "Smart Fitness Watch",
-          "price": 249,
-          "category": "Electronics",
-          "image": "https://cdn.thewirecutter.com/wp-content/media/2025/09/BEST-MENS-WHITE-TEES-SUB-2048px-5935.jpg?auto=webp&quality=75&width=1024"
-        },
-        "quantity": 1
-      },
-      {
-        "_id": "7517c1b94f1d342a3cd9e902",
-        "product": {
-          "_id": "6517a2f14f1d342a3cd9e8f5",
-          "title": "Smart Fitness Watch",
-          "price": 249,
-          "category": "Electronics",
-          "image": "https://cdn.thewirecutter.com/wp-content/media/2025/09/BEST-MENS-WHITE-TEES-SUB-2048px-5935.jpg?auto=webp&quality=75&width=1024"
-        },
-        "quantity": 1
-      },
-      {
-        "_id": "7517c1b94f1d342a3cd9e902",
-        "product": {
-          "_id": "6517a2f14f1d342a3cd9e8f5",
-          "title": "Smart Fitness Watch",
-          "price": 249,
-          "category": "Electronics",
-          "image": "https://cdn.thewirecutter.com/wp-content/media/2025/09/BEST-MENS-WHITE-TEES-SUB-2048px-5935.jpg?auto=webp&quality=75&width=1024"
-        },
-        "quantity": 1
-      },
-      {
-        "_id": "7517c1b94f1d342a3cd9e902",
-        "product": {
-          "_id": "6517a2f14f1d342a3cd9e8f5",
-          "title": "Smart Fitness Watch",
-          "price": 249,
-          "category": "Electronics",
-          "image": "https://cdn.thewirecutter.com/wp-content/media/2025/09/BEST-MENS-WHITE-TEES-SUB-2048px-5935.jpg?auto=webp&quality=75&width=1024"
-        },
-        "quantity": 1
-      }
-
-],       // All products in cart
-    isCartOpen: false,   // Controls drawer visibility
+    cart: { items: [], totalPrice: 0 },
+    loading: false,
+    isCartOpen: false,
+    error: null,
   }),
   getters: {
-    totalPrice: (state) => state.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+    totalItems: (state) => state.cart.items.reduce((acc, item) => acc + item.quantity, 0),
+
+    getItemById: (state) => (productId) => state.cart.items.find((item) => item.product._id === productId),
+
   },
   actions: {
-    addToCart(product) {
-      const existing = this.cartItems.find(item => item.id === product.id)
-      if (existing) existing.quantity += 1
-      else this.cartItems.push({ ...product, quantity: 1 })
+    getAuthHeader() {
+      const token = Cookies.get('SnapBuyToken')
+      return token ? { Authorization: `Bearer ${token}` } : {}
     },
-    removeFromCart(id) {
-      this.cartItems = this.cartItems.filter(item => item.id !== id)
+
+    async fetchCart() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const res = await axios.get("http://localhost:5000/cart/getCart", { headers: this.getAuthHeader() });
+        this.cart.items = [...res.data.cart.items];
+        this.cart.totalPrice = res.data.cart.total;
+      } catch (err) {
+        console.log(err)
+        this.error = err.response?.data?.message || "Failed to fetch cart";
+      } finally {
+        this.loading = false;
+      }
     },
-    updateQuantity(id, qty) {
-      const item = this.cartItems.find(item => item.id === id)
-      if (item) item.quantity = qty
+
+    async addToCart(productId) {
+      const token = Cookies.get('SnapBuyToken')
+      const toast = useToast()
+
+      if (!token) {
+        toast.error('Please login to add product to the cart.', {
+          timeout: 2500,
+          position: 'top-right',
+        })
+        return
+      }
+
+
+      this.loading = true;
+      this.error = null;
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/cart/add",
+          { productId },
+          { headers: this.getAuthHeader() }
+        );
+        this.cart = res.data.cart;
+
+        toast.success('Product added to cart successfully!', {
+          timeout: 2000,
+          position: 'top-right',
+        })
+      } catch (err) {
+        console.log(err)
+        this.error = err.response?.data?.message || "Failed to add to cart";
+      } finally {
+        this.loading = false;
+      }
     },
+
+    async decreaseCartItem(productId) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/cart/decrease",
+          { productId },
+          { headers: this.getAuthHeader() }
+        );
+        this.cart = res.data.cart;
+      } catch (err) {
+        this.error = err.response?.data?.message || "Failed to decrease item";
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async clearCart() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/cart/clear",
+          {},
+          { headers: this.getAuthHeader() }
+        );
+        this.cart = res.data.cart;
+      } catch (err) {
+        this.error = err.response?.data?.message || "Failed to clear cart";
+      } finally {
+        this.loading = false;
+      }
+    },
+
     openCart() { this.isCartOpen = true },
     closeCart() { this.isCartOpen = false },
   }

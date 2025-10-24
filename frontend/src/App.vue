@@ -1,5 +1,8 @@
 <script setup>
   import Navbar from './components/NavbarCom.vue';
+  import { useUserStore } from "@/stores/userStore";
+  const userStore = useUserStore();
+
 </script>
 
 <template>
@@ -9,6 +12,11 @@
   <div class="mt-[60px]">
     <router-view></router-view>
   </div>
-</template>
 
-<style scoped></style>
+  <div
+    v-if="userStore.loading"
+    class="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]"
+  >
+    <div class="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+  </div>
+</template>

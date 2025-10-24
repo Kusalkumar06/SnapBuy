@@ -17,6 +17,28 @@ export const getProducts = async (req, res) => {
   }
 };
 
+export const insertProducts = async (req, res) => {
+  const products = req.body; // expecting an array of product objects
+
+  if (!Array.isArray(products) || products.length === 0) {
+    return res.status(400).json({ message: "Products array is required" });
+  }
+
+  try {
+    const insertedProducts = await ProductModel.insertMany(products);
+    res.status(201).json({
+      message: `${insertedProducts.length} products inserted successfully`,
+      result: insertedProducts,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Error inserting products",
+      error: err.message,
+    });
+  }
+};
+
+
 
 export const addReview = async (req, res) => {
   try {

@@ -2,8 +2,18 @@
   import SampleCategoryProducts from '../components/SampleCategoryProducts.vue';
   import HeroCom from '../components/HeroCom.vue';
   import { useProductStore } from '@/stores/productStore';
+  import { useRouter } from 'vue-router';
 
   const productStore = useProductStore();
+  const router = useRouter();
+
+  const goToShopWithCategory = (category) => {
+    console.log(category)
+  router.push({ 
+    name: 'shop', 
+    query: { category }  // pass the selected category as query param
+  })
+}
 </script>
 
 <template>
@@ -21,7 +31,7 @@
           </div>
           <SampleCategoryProducts :category="category"/>
           <div class="text-center my-5">
-            <button class="text-[#95662d] bg-white px-4 py-1 rounded-md font-[500]">Show More from {{ category }}</button>
+            <button @click="goToShopWithCategory(category)" class="text-[#95662d] bg-white px-4 py-1 rounded-md font-[500]">Show More from {{ category }}</button>
           </div>
         </div>
       </div>
