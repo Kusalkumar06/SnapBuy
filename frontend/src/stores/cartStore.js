@@ -27,7 +27,7 @@ export const useCartStore = defineStore('cartStore', {
       this.error = null;
 
       try {
-        const res = await axios.get("http://localhost:5000/cart/getCart", { headers: this.getAuthHeader() });
+        const res = await axios.get("https://snapbuy-s5tb.onrender.com/cart/getCart", { headers: this.getAuthHeader() });
         this.cart.items = [...res.data.cart.items];
         this.cart.totalPrice = res.data.cart.total;
       } catch (err) {
@@ -55,7 +55,7 @@ export const useCartStore = defineStore('cartStore', {
       this.error = null;
       try {
         const res = await axios.post(
-          "http://localhost:5000/cart/add",
+          "https://snapbuy-s5tb.onrender.com/cart/add",
           { productId },
           { headers: this.getAuthHeader() }
         );
@@ -78,7 +78,7 @@ export const useCartStore = defineStore('cartStore', {
       this.error = null;
       try {
         const res = await axios.post(
-          "http://localhost:5000/cart/decrease",
+          "https://snapbuy-s5tb.onrender.com/cart/decrease",
           { productId },
           { headers: this.getAuthHeader() }
         );
@@ -95,7 +95,7 @@ export const useCartStore = defineStore('cartStore', {
       this.error = null;
       try {
         const res = await axios.post(
-          "http://localhost:5000/cart/clear",
+          "https://snapbuy-s5tb.onrender.com/cart/clear",
           {},
           { headers: this.getAuthHeader() }
         );

@@ -34,7 +34,7 @@ export const useProductStore = defineStore('productStore',{
       this.error = null;
 
       try {
-        const res = await axios.get("http://localhost:5000/product/getProducts/");
+        const res = await axios.get("https://snapbuy-s5tb.onrender.com/product/getProducts/");
          // your backend endpoint
         this.productsList = res.data.products; // assuming backend returns array of products
       } catch (err) {

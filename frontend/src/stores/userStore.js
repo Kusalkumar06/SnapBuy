@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
       this.loading = true
 
       try{
-        const res = await axios.post("http://localhost:5000/auth/login", credentials);
+        const res = await axios.post("https://snapbuy-s5tb.onrender.com/auth/login", credentials);
         const token = res.data.token;
 
         Cookies.set("SnapBuyToken", token, { expires: 7 });
@@ -39,7 +39,7 @@ export const useUserStore = defineStore('user', {
     async register(data) {
       this.loading = true;
       try {
-        const res = await axios.post("http://localhost:5000/auth/register", data);
+        const res = await axios.post("https://snapbuy-s5tb.onrender.com/auth/register", data);
 
         return res.data.message || "Registration successful!";
       } catch (err) {
