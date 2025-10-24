@@ -18,7 +18,7 @@ export const getProducts = async (req, res) => {
 };
 
 export const insertProducts = async (req, res) => {
-  const products = req.body; // expecting an array of product objects
+  const products = req.body;
 
   if (!Array.isArray(products) || products.length === 0) {
     return res.status(400).json({ message: "Products array is required" });
