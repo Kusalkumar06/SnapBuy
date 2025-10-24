@@ -13,10 +13,7 @@
     <router-view></router-view>
   </div>
 
-  <div
-    v-if="userStore.loading"
-    class="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]"
-  >
+  <div v-if="userStore.loading" class="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
     <div class="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
   </div>
 </template>
