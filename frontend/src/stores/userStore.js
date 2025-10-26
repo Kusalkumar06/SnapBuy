@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
 
 
 export const useUserStore = defineStore('user', {
@@ -22,7 +21,7 @@ export const useUserStore = defineStore('user', {
         const res = await axios.post("https://snapbuy-s5tb.onrender.com/auth/login", credentials);
         const token = res.data.token;
 
-        Cookies.set("SnapBuyToken", token, { expires: 7 });
+        Cookies.set("SnapBuyToken", token, { expires: 7 ,path:'/'});
 
         this.token = token;
         this.user = res.data.user;
@@ -53,11 +52,10 @@ export const useUserStore = defineStore('user', {
     },
 
     logout() {
-      Cookies.remove("SnapBuyToken")
-      const router = useRouter()
-      router.push('/')
+      Cookies.remove("SnapBuyToken", { path: '/' })
       this.user = null
       this.token = null
+      this.showLoginModal = false;
     },
   },
 })

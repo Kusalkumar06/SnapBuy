@@ -22,7 +22,7 @@
         <LoginModal :isOpen="userStore.showLoginModal" @close="userStore.showLoginModal = false" />
       </div>
       <div v-else>
-        <button @click="userStore.logout" class="px-3 py-1 text-[#95662d] font-[500] border-1 rounded hover:bg-[#95662d] hover:text-white transition duration-300">Logout</button>
+        <router-link :to="{name : 'home'}" @click="userStore.logout" class="px-3 py-1 text-[#95662d] font-[500] border-1 rounded hover:bg-[#95662d] hover:text-white transition duration-300">Logout</router-link>
       </div>
     </div>
 </div>
@@ -34,6 +34,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { useUserStore } from '@/stores/userStore';
 import CartPage from '@/pages/CartPage.vue';
 import LoginModal from './LoginModal.vue';
+
 
 const cartStore = useCartStore();
 const userStore = useUserStore();
