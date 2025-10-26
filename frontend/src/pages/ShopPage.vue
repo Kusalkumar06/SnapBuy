@@ -3,7 +3,7 @@
   <div class="px-35 bg-gray-200 py-10">
     <div>
       <h1 class="text-[38px] font-bold">Shop All Products</h1>
-      <p class="text-stone-600">Discover our complete collection of premium items</p>
+      <p class="text-stone-600 font">Discover our complete collection of premium items</p>
     </div>
     <hr class="my-5 text-zinc-400"/>
     <div class="flex">

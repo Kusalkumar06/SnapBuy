@@ -6,6 +6,7 @@ import AboutPage from '@/pages/AboutPage.vue'
 import CartPage from '@/pages/CartPage.vue'
 import ContactPage from '@/pages/ContactPage.vue'
 import ShopPage from '@/pages/ShopPage.vue'
+import WishlistPage from '@/pages/WishlistPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,12 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutPage,
+    },
+    {
+      path: '/wishist',
+      name: "wishlist",
+      component: WishlistPage,
+      meta: { requiresAuth: true } ,
     },
     {
       path: '/cart',
@@ -44,7 +51,18 @@ const router = createRouter({
       component: () => import('@/pages/CheckoutPage.vue'),
       meta: { requiresAuth: true } ,
     },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/pages/NotFoundPage.vue') }
+    {
+      path: '/product/:id',
+      name: 'productDetails',
+      component: () => import('@/components/ProductDetails.vue'),
+      props: true,
+      meta: { requiresAuth: true } ,
+    },
+    { 
+      path: '/:pathMatch(.*)*', 
+      name: 'NotFound', 
+      component: () => import('@/pages/NotFoundPage.vue'),
+    }
   ],
 })
 

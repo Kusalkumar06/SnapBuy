@@ -3,7 +3,7 @@
     <div class=" py-20 px-30 bg-[#f4efea]">
       <div class="text-center">
         <h1 class="text-[40px] font-bold mb-4">Get in Touch</h1>
-        <p class="text-black">We'd love to hear from you. Send us a message!</p>
+        <p class="text-black font">We'd love to hear from you. Send us a message!</p>
       </div>
     </div>
 
@@ -62,7 +62,7 @@
         <div class="flex flex-wrap justify-between gap-8">
           <div v-for="(faq, index) in faqs" :key="index" class="p-6 border border-gray-200 rounded-lg w-[45%]" >
             <h3 class="font-semibold text-lg mb-3 text-gray-900"> {{ faq.question }} </h3>
-            <p class="text-gray-700">{{ faq.answer }}</p>
+            <p class="text-gray-700 font">{{ faq.answer }}</p>
           </div>
         </div>
       </div>

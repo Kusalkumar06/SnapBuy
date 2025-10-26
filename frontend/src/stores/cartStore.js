@@ -62,7 +62,7 @@ export const useCartStore = defineStore('cartStore', {
         this.cart = res.data.cart;
 
         toast.success('Product added to cart successfully!', {
-          timeout: 2000,
+          timeout: 1000,
           position: 'top-right',
         })
       } catch (err) {

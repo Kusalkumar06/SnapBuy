@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#CF8D3E] p-4 rounded-md">
+  <div class="bg-[#CF8D3E] p-4 rounded-md font">
     <div>
       <div class='text-[#3A3A3A] flex items-center mb-2 pb-2'>
         <Filter color="white" strokeWidth={1}></Filter>
@@ -80,3 +80,7 @@
 
   const categories = productStore.categories
 </script>
+
+<style>
+
+</style>

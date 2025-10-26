@@ -5,6 +5,7 @@ import cors from "cors"
 import authRouter from "./routes/authRoutes.js"
 import productRouter from "./routes/productRoutes.js"
 import cartRouter from "./routes/cartRoues.js"
+import wishListRouter from "./routes/wishListRoutes.js"
 
 
 const app = express()
@@ -40,3 +41,5 @@ app.use('/auth/', authRouter)
 app.use('/product/', productRouter)
 
 app.use('/cart/', cartRouter)
+
+app.use('/wishlist', wishListRouter)

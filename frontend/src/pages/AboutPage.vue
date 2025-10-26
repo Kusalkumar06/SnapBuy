@@ -3,7 +3,7 @@
     <div class="bg-[#f4efea] border-b px-30">
       <div class="mx-auto px-4 py-25">
         <h1 class="text-5xl font-bold text-foreground mb-4">About SnapBuy</h1>
-        <p class="text-lg text-muted-foreground max-w-2xl">
+        <p class="text-lg text-muted-foreground max-w-2xl font">
           Discover the story behind our brand and our journey from a small fashion store to a complete online marketplace.
         </p>
       </div>
@@ -13,16 +13,16 @@
       <div class="flex justify-between gap-12 mb-16">
         <div class="w-[50%]">
           <h2 class="text-3xl font-bold text-foreground mb-4">Our Story</h2>
-          <p class="text-muted-foreground leading-relaxed mb-4">
+          <p class="text-muted-foreground leading-relaxed mb-4 font">
             SnapBuy began as a small online fashion store, created with a single goal — to bring stylish, high-quality clothing
             to people who value comfort and creativity. What started as a passion project for fashion quickly grew into something much bigger.
           </p>
-          <p class="text-muted-foreground leading-relaxed mb-4">
+          <p class="text-muted-foreground leading-relaxed mb-4 font">
             As our community expanded, we realized that customers wanted more than just fashion — they wanted a complete
             online shopping experience. So, we evolved into a full-fledged e-commerce platform, offering everything from
             fashion and beauty to electronics, home essentials, and lifestyle products.
           </p>
-          <p class="text-muted-foreground leading-relaxed">
+          <p class="text-muted-foreground leading-relaxed font">
             Today, SnapBuy stands as a modern online destination that connects people to premium products across categories,
             while staying true to our original values — authenticity, quality, and customer trust.
           </p>
@@ -38,7 +38,7 @@
         <div class="flex justify-around">
           <div v-for="(value, index) in values" :key="index" class="w-[25%] rounded-lg p-6 text-center bg-[#f5f4f3]">
             <h3 class="text-[18px] font-bold text-foreground mb-3">{{ value.title }}</h3>
-            <p class="">{{ value.description }}</p>
+            <p class="font">{{ value.description }}</p>
           </div>
         </div>
       </div>

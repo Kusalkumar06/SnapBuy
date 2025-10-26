@@ -9,10 +9,10 @@
 
   const goToShopWithCategory = (category) => {
     console.log(category)
-  router.push({ 
-    name: 'shop', 
-    query: { category }  // pass the selected category as query param
-  })
+    router.push({ 
+      name: 'shop', 
+      query: { category }  // pass the selected category as query param
+    })
 }
 </script>
 

@@ -6,6 +6,10 @@ const reviewSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  name: { 
+    type: String, 
+    required: true 
+  },
   comment: {
     type: String,
     required: true,
@@ -44,6 +48,10 @@ const productSchema = new mongoose.Schema({
     default: 0,
   },
   reviews: [reviewSchema],
+  numReviews: {
+    type: Number,
+    default: 0,
+  },
   createdAt:{
     type: Date,
     default: Date.now,

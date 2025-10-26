@@ -4,12 +4,10 @@
       <div class="bg-white p-8 rounded-xl w-full max-w-md relative">
         <button @click="close" class="absolute top-3 right-3 text-[32px] text-gray-500 hover:text-gray-800">&times;</button>
 
-        <!-- Title -->
         <h2 class="text-2xl font-bold mb-6 text-center">
           {{ isLogin ? 'Login' : 'Register' }}
         </h2>
 
-        <!-- Form -->
         <form @submit.prevent="handleSubmit" class="space-y-4">
           <div v-if="!isLogin">
             <label for="name" class="block mb-1 ">User Name</label>
@@ -38,7 +36,6 @@
           </button>
         </form>
 
-        <!-- Toggle link -->
         <p class="text-center mt-4 text-[12px]">
           {{ isLogin ? "Not registered yet?" : "Already have an account?" }}
           <span @click="toggleForm" class="text-blue-600 cursor-pointer hover:underline">

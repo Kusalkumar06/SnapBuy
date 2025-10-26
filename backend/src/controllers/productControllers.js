@@ -42,15 +42,23 @@ export const insertProducts = async (req, res) => {
 
 export const addReview = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const { id } = req.params;
     const { rating, comment } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const username = req.user.username;
 
-    const product = await ProductModel.findById(productId);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await ProductModel.findById(id);
+    if (!product) 
+      return res.status(404).json({ 
+        message: "Product not found" 
+      });
 
-    product.reviews.push({ user: userId, username, rating, comment });
+    product.reviews.push({ user: userId, name: username, rating, comment });
+
+    product.rating = product.reviews.reduce((acc, item) => acc + item.rating, 0) / product.reviews.length;
+
+    product.numReviews = product.reviews.length;
+
 
     await product.save();
 

@@ -1,8 +1,16 @@
 <script setup>
   import Navbar from './components/NavbarCom.vue';
   import { useUserStore } from "@/stores/userStore";
-  const userStore = useUserStore();
+  import { useProductStore } from './stores/productStore';
+  import { onMounted } from 'vue';
+  import FooterCom from './components/FooterCom.vue';
 
+  const userStore = useUserStore();
+  const productStore = useProductStore();
+
+  onMounted(() => {
+    productStore.fetchProducts();
+  })
 </script>
 
 <template>
@@ -11,6 +19,9 @@
   </div>
   <div class="mt-[60px]">
     <router-view></router-view>
+  </div>
+  <div>
+    <FooterCom/>
   </div>
 
   <div v-if="userStore.loading" class="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">

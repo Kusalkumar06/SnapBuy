@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken"
 import "dotenv/config"
 import { CartModel }  from "../models/cartModel.js"
 import { UserModel } from "../models/userModel.js"
+import {WishListModel} from "../models/wishListModel.js"
+
 
 
 export const register = async (req, res) => {
@@ -25,6 +27,8 @@ export const register = async (req, res) => {
     });
 
     await CartModel.create({ user: newUser._id, items: [] });
+
+    await WishListModel.create({ user: newUser._id, items: [] });
 
     res.status(201).json({
       message: "User created successfully.",

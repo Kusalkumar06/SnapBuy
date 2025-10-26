@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 
 export const useUserStore = defineStore('user', {
@@ -52,9 +53,12 @@ export const useUserStore = defineStore('user', {
     },
 
     logout() {
+      Cookies.remove("SnapBuyToken")
+      const router = useRouter()
+      router.push({name: 'home'})
       this.user = null
       this.token = null
-      Cookies.remove("SnapBuyToken")
+      
     },
   },
 })

@@ -2,7 +2,7 @@
   <div class="px-5">
     <div>
       <h1 class="text-[28px] font-[500]">Featured Collection</h1>
-      <p class="text-[14px] text-zinc-600">Explore our handpicked selection of premium items</p>
+      <p class="text-[14px] text-zinc-600 font">Explore our handpicked selection of premium items</p>
     </div>
 
 

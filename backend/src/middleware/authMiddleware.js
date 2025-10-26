@@ -5,8 +5,6 @@ import { UserModel } from "../models/userModel.js"
 export const authenticate = async (req,res,next) => {
   const token = req.headers.authorization.split(" ")[1];
 
-  console.log(token)
-
   if (!token){
     return res.status(401).json({
       message: "Token not provided",
@@ -20,9 +18,8 @@ export const authenticate = async (req,res,next) => {
       })
     }
     const verified = jwt.verify(token,secretCode)
-    console.log(verified)
     const userDetails = await UserModel.findOne({_id: verified.id})
-    console.log(userDetails)
+
     if (!userDetails){
       return res.status(400).json({
         message: "user not found."
