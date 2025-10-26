@@ -11,8 +11,7 @@
       <router-link :to="{name : 'shop'}" class="text-[#95662d] font-[500] hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-md transition duration-300">Shop</router-link>
       <router-link :to="{name : 'wishlist'}" class="text-[#95662d] font-[500] hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-md transition duration-300">Wishlist</router-link>
       <router-link :to="{name : 'about'}" class="text-[#95662d] font-[500] hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-md transition duration-300">About</router-link>
-      <router-link :to="{name : 'contact'}" class="text-[#95662d] font-[500] hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-md transition duration-300">Contact us</router-link>
-      
+      <router-link :to="{name : 'contact'}" class="text-[#95662d] font-[500] hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-md transition duration-300">Contact us</router-link>   
     </nav>
 
     <div class="flex items-center space-x-4">

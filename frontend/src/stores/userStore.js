@@ -55,10 +55,9 @@ export const useUserStore = defineStore('user', {
     logout() {
       Cookies.remove("SnapBuyToken")
       const router = useRouter()
-      router.push({name: 'home'})
+      router.push('/')
       this.user = null
       this.token = null
-      
     },
   },
 })
