@@ -1,5 +1,5 @@
 import {WishListModel} from "../models/wishListModel.js"
-import {ProductModel} from "../models/productModel.js"
+import {ProductModel} from "../models/ProductModel.js"
 
 export const getWishList = async (req,res) => {
   const userId = req.user.userId;
