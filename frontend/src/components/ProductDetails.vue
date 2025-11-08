@@ -22,7 +22,7 @@
 
     <div class="my-10">
       <h1 class="text-[24px]">About This Product</h1>
-      <p class="text-[16px] text-zinc-600" style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">{{ productDetails.description }}</p>
+      <p class="text-[16px] text-zinc-600" style="font-family: 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">{{ productDetails.description }}</p>
     </div>
 
     <div class="flex gap-5 flex-shrink">
