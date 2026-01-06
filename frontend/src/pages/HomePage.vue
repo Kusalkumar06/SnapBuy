@@ -21,21 +21,26 @@
     <HeroCom/>
   </div>
   <div>
-    <div class="relative mt-[100vh] bg-[#95662d]">
-      <div class="container mx-auto py-16 px-30">
-        <h2 class="text-3xl font-[500] mb-8 text-[white]">Explore our Products</h2>
-        <div v-for="category in productStore.categories" :key="category" class=" my-5">
-          <div class="my-[30px]">
-            <h1 class="text-[28px] font-md text-white">{{ category }}</h1>
-            <p class="text-[14px] text-white">Explore our fashion & apparel collection</p>
-          </div>
-          <SampleCategoryProducts :category="category"/>
-          <div class="text-center my-5">
-            <button @click="goToShopWithCategory(category)" class="text-[#95662d] bg-white px-4 py-1 rounded-md font-[500]">Show More from {{ category }}</button>
-          </div>
+  <div class="relative mt-[100vh] bg-[#95662d]">
+    <div class="container mx-auto py-16 px-8">
+      <h2 class="text-3xl font-medium mb-8 text-white">Explore our Products</h2>
+      <section v-for="category in productStore.categories" :key="category" class=" sticky top-18  bg-white/95 p-6 my-6 rounded-lg shadow-lg" >
+        <div class="mb-6">
+          <h1 class="text-[28px] font-medium text-black">
+            {{ category }}
+          </h1>
+          <p class="text-sm text-gray-600">{{ productStore.categoryTexts[category] }}</p>
         </div>
-      </div>
+
+        <SampleCategoryProducts :category="category" />
+
+        <div class="text-center mt-6">
+          <button @click="goToShopWithCategory(category)" class="text-white bg-[#95662d]/95 px-4 py-2 rounded-md font-medium">Show More from {{ category }}</button>
+        </div>
+      </section>
     </div>
   </div>
+</div>
+
 </template>
 

@@ -5,16 +5,22 @@
       <p class="text-[14px] text-zinc-600 font">Explore our handpicked selection of premium items</p>
     </div>
 
-
-    <div class="flex flex-wrap justify-between gap-4 my-5">
-      <ProductCard v-for="product in paginatedProducts" :key="product._id" :productDetails="product"/>
+    <div v-if="paginatedProducts.length <=0">
+      <div class="flex justify-center items-center h-60">
+        <div class="w-10 h-10 border-4 border-[#95662d] border-t-transparent rounded-full animate-spin"></div>
+      </div>
     </div>
+    <div v-else>
+      <div class="flex flex-wrap justify-between gap-4 my-5">
+        <ProductCard v-for="product in paginatedProducts" :key="product._id" :productDetails="product"/>
+      </div>
 
 
-    <div class="flex justify-center items-center gap-2 mt-5">
-      <button :disabled="currentPage === 1" @click="currentPage--" class="px-3 py-1 border rounded"> Prev</button>
-      <span>Page {{ currentPage }} / {{ totalPages }}</span>
-      <button :disabled="currentPage === totalPages" @click="currentPage++" class="px-3 py-1 border rounded"> Next </button>
+      <div class="flex justify-center items-center gap-2 mt-5">
+        <button :disabled="currentPage === 1" @click="currentPage--" class="px-3 py-1 border rounded"> Prev</button>
+        <span>Page {{ currentPage }} / {{ totalPages }}</span>
+        <button :disabled="currentPage === totalPages" @click="currentPage++" class="px-3 py-1 border rounded"> Next </button>
+      </div>
     </div>
   </div>
 </template>

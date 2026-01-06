@@ -4,8 +4,8 @@
     <p class="font text-zinc-700 mb-6">Turn your wishlist into reality — buy it today!</p>
 
     <div v-if="wishlistStore.loading" class="text-gray-500">
-      <div class="flex justify-center items-center h-60">
-        <div class="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+      <div class="flex justify-center items-center h-80">
+        <div class="w-10 h-10 border-4 border-[#95662d] border-t-transparent rounded-full animate-spin"></div>
       </div>
     </div>
 

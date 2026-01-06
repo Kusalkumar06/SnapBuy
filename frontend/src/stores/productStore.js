@@ -16,11 +16,11 @@ export const useProductStore = defineStore('productStore',{
       "Sports & Fitness"
     ],
     categoryTexts: {
-      "Electronics": "Explore our electronics collection",
-      "Fashion & Apparel": "Explore our fashion & apparel collection",
-      "Home & Kitchen": "Explore our home & kitchen collection",
-      "Beauty & Personal Care": "Explore our beauty & personal care collection",
-      "Sports & Fitness": "Explore our sports & fitness collection"
+      "Electronics": "Smart tech, powerful performance, and everyday innovation",
+      "Fashion & Apparel": "Style that speaks — trends crafted for every moment",
+      "Home & Kitchen": "Thoughtfully designed essentials for modern living",
+      "Beauty & Personal Care": "Care that enhances your natural confidence",
+      "Sports & Fitness": "Gear up to move, train, and perform better"
     }
   }),
 
