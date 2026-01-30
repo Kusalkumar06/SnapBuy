@@ -17,7 +17,7 @@
       <div v-for="product in wishlist" :key="product._id" class="rounded-lg shadow-lg pb-2 flex flex-col">
         <router-link :to="{name:'productDetails', params:{id: product._id}}">
           <div class="relative">
-            <img :src="product.image" class="w-70 h-56 object-cover rounded-lg group-hover:scale-110 object-cover transition-transform duration-500" />
+            <img :src="product.image" class="w-70 h-56 rounded-lg group-hover:scale-110 object-cover transition-transform duration-500" />
             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-hover:scale-110 transition-transform duration-300"></div>
           </div>
           <div class="px-4 pt-5">
@@ -31,7 +31,7 @@
         </router-link>
 
         <div class="text-center pb-2 flex flex-col gap-2 p-2">
-          <button type="button" @click="cartStore.addToCart(productDetails._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
+          <button type="button" @click="cartStore.addToCart(product._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
           <button class="mt-auto text-red-500 hover:text-white border-1  py-1 hover:bg-red-600 transition rounded-lg" @click="wishlistStore.removeFromWishlist(product._id)">Remove from Wishlist</button>
         </div>
       </div>
@@ -42,8 +42,10 @@
 <script setup>
 import { onMounted,computed } from 'vue';
 import { useWishlistStore } from '@/stores/wishlistStore';
+import { useCartStore } from '@/stores/cartStore';
 
 const wishlistStore = useWishlistStore();
+const cartStore = useCartStore();
 
 const wishlist = computed(() => {
   return wishlistStore.wishlist

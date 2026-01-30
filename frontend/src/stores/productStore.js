@@ -29,8 +29,6 @@ export const useProductStore = defineStore('productStore',{
       return state.productsList.filter(product => product.category === category).slice(0, 4);
     },
     getProductById: (state) => (id) => {
-      console.log(id)
-      console.log(state.productsList.find(product => product._id === id))
       return state.productsList.find(product => product._id === id);
     },
     getRelatedProducts: (state) => (id,category) => {

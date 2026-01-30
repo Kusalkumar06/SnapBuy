@@ -39,7 +39,7 @@ export const addToWishList = async (req,res) => {
     );
 
     if (alreadyExists) {
-      return res.status(400).json({ message: 'Already in wishlist',wishist: wishList});
+      return res.status(400).json({ message: 'Already in wishlist',wishlist: wishList});
     }
 
     wishList.items.push({product: productId});

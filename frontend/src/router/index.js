@@ -22,7 +22,7 @@ const router = createRouter({
       component: AboutPage,
     },
     {
-      path: '/wishist',
+      path: '/wishlist',
       name: "wishlist",
       component: WishlistPage,
       meta: { requiresAuth: true } ,

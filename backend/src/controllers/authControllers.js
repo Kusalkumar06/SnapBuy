@@ -46,14 +46,14 @@ export const register = async (req, res) => {
 
 export const login = async (req,res) => {
 	const {email,password} = req.body
-	const exsisting_user = await UserModel.findOne({email});
+	const existing_user = await UserModel.findOne({email});
     try{
-			if (!exsisting_user){
+			if (!existing_user){
 				return res.status(400).json({
 					message: "User is not registered yet.",
 				})
 			} else {
-				const validPassword = await bcrypt.compare(password, exsisting_user.password);
+				const validPassword = await bcrypt.compare(password, existing_user.password);
 				if (!validPassword){
 					return res.status(400).json({
 						message: "Invalid Credentials."
@@ -61,9 +61,9 @@ export const login = async (req,res) => {
 				} else {
 						const secret_code = process.env.SECRET_CODE
 						const payload = {
-							id: exsisting_user._id,
-							username: exsisting_user.username,
-							email:exsisting_user.email,
+							id: existing_user._id,
+							username: existing_user.username,
+							email:existing_user.email,
 						}
 						const jwtToken = jwt.sign(payload,secret_code, {expiresIn : "7d"})
 

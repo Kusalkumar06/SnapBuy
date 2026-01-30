@@ -17,7 +17,7 @@ app.use(express.json())
 const port = process.env.PORT || 5000
 const url = process.env.MONGO_URI
 
-if (!URL){
+if (!url){
     console.error("MONGO_URI is not defined in the .env file.")
     process.exit(1)
 }
