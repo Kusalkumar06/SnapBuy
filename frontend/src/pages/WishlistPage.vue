@@ -31,8 +31,13 @@
         </router-link>
 
         <div class="text-center pb-2 flex flex-col gap-2 p-2">
-          <button type="button" @click="cartStore.addToCart(product._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
-          <button class="mt-auto text-red-500 hover:text-white border-1  py-1 hover:bg-red-600 transition rounded-lg" @click="wishlistStore.removeFromWishlist(product._id)">Remove from Wishlist</button>
+          <div v-if="cartStore.getItemById(product._id)" class="flex items-center justify-center gap-2 mt-2">
+            <button class="bg-[#95662d] text-white px-3 py-1 rounded" @click="cartStore.decreaseCartItem(product._id)">-</button>
+            <span class="font-medium">{{ cartStore.getItemById(product._id).quantity }}</span>
+            <button class="bg-[#95662d] text-white px-3 py-1 rounded" @click="cartStore.addToCart(product._id)">+</button>
+          </div>
+          <button v-else type="button" @click="cartStore.addToCart(product._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
+          <button class="mt-auto text-red-500 hover:text-white border  py-1 hover:bg-red-600 transition rounded-lg" @click="wishlistStore.removeFromWishlist(product._id)">Remove from Wishlist</button>
         </div>
       </div>
     </div>

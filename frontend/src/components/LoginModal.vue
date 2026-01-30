@@ -11,22 +11,22 @@
         <form @submit.prevent="handleSubmit" class="space-y-4">
           <div v-if="!isLogin">
             <label for="name" class="block mb-1 ">User Name</label>
-            <input id="name" v-model="name" type="text" placeholder="Enter your name" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
+            <input id="name" v-model.trim="name" type="text" placeholder="Enter your name" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
           </div>
 
           <div>
             <label for="email" class="block mb-1">Email</label>
-            <input id="email" v-model="email" type="email" placeholder="Enter your email" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
+            <input id="email" v-model.trim="email" type="email" placeholder="Enter your email" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
           </div>
 
           <div>
             <label for="password" class="block mb-1">Password</label>
-            <input id="password" v-model="password" type="password" placeholder="Enter your password" minlength="8" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
+            <input id="password" v-model.trim="password" type="password" placeholder="Enter your password" minlength="8" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
           </div>
 
           <div v-if="!isLogin">
             <label for="confirmPassword" class="block mb-1">Confirm Password</label>
-            <input id="confirmPassword" v-model="confirmPassword" type="password" placeholder="Confirm your password" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
+            <input id="confirmPassword" v-model.trim="confirmPassword" type="password" placeholder="Confirm your password" class="w-full py-2 px-3 border rounded text-gray-600 text-[12px] outline-none" required>
           </div>
 
           <p v-if="errorMessage" class="text-red-600 text-sm mt-1">{{ errorMessage }}</p>
@@ -108,6 +108,16 @@ const handleSubmit = async () => {
     errorMessage.value = err.message;
   }
 }
+
+// Watch for password changes to clear mismatch error or validate in real-time
+import { watch } from 'vue'
+watch([password, confirmPassword], ([newPass, newConfirm]) => {
+  if (!isLogin.value && newConfirm && newPass !== newConfirm) {
+    errorMessage.value = "Passwords do not match"
+  } else if (!isLogin.value && newConfirm && newPass === newConfirm && errorMessage.value === "Passwords do not match") {
+    errorMessage.value = ""
+  }
+})
 </script>
 
 <style scoped>

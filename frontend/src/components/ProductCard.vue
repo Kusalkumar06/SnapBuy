@@ -27,7 +27,12 @@
         </div>
       </router-link>
       <div class="text-center pb-5">
-        <button type="button" @click="cartStore.addToCart(productDetails._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
+        <div v-if="cartStore.getItemById(productDetails._id)" class="flex items-center justify-center gap-2 mt-2">
+           <button class="bg-[#95662d] text-white px-3 py-1 rounded" @click="cartStore.decreaseCartItem(productDetails._id)">-</button>
+           <span class="font-medium">{{ cartStore.getItemById(productDetails._id).quantity }}</span>
+           <button class="bg-[#95662d] text-white px-3 py-1 rounded" @click="cartStore.addToCart(productDetails._id)">+</button>
+        </div>
+        <button v-else type="button" @click="cartStore.addToCart(productDetails._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
       </div>
     </div>
 

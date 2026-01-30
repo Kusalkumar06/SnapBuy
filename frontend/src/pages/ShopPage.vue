@@ -38,7 +38,7 @@ const route = useRoute()
   provide('filters', filters)
 
   onMounted(() => {
-  console.log(route.query)
+  // console.log(route.query)
   if (route.query.category) {
     filters.category = route.query.category
   }

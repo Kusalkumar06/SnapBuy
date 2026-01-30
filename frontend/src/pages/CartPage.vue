@@ -11,22 +11,22 @@
 
       <div class="flex-1 overflow-y-auto p-6 space-y-4">
         <div v-if="items.length === 0" class="text-center py-12 text-gray-500">
-          🛒 <p class="mt-4">Your cart is empty</p>
+          <ShoppingCart /> <p class="mt-4">Your cart is empty</p>
           <button @click="closeCart" class="border px-4 py-2 rounded mt-4">Continue Shopping</button>
         </div>
-        <div v-else v-for="item in items" :key="item.id" class="flex gap-4 pb-4 border-b border-gray-200 hover:bg-gray-100 p-2 rounded-lg">
+        <router-link  v-else v-for="item in items" :key="item.id"  :to="{name:'productDetails', params:{id: item.product._id}}" class="flex gap-4 pb-4 border-b border-gray-200 hover:bg-gray-100 p-2 rounded-lg">
           <img :src="item.product.image" class="w-20 h-20 object-cover rounded" />
           <div class="flex-1 min-w-0">
             <h3 class="font-semibold text-sm truncate">{{ item.product.title }}</h3>
-            <p class="text-sm font-bold text-blue-600 mt-1">₹{{ item.product.price*3 }}</p>
+            <p class="text-sm font-bold text-blue-600 mt-1">₹{{ (item.product.price*3).toFixed(2) }}</p>
             <div class="flex items-center gap-2 mt-2">
               <button class="border px-2 rounded" @click="cartStore.decreaseCartItem(item.product._id)">-</button>
               <span class="text-sm font-medium w-6 text-center">{{ item.quantity }}</span>
               <button class="border px-2 rounded" @click="cartStore.addToCart(item.product._id)">+</button>
             </div>
           </div>
-          <button @click="removeItem(item.product.id)" class="text-red-500 hover:text-red-700">🗑️</button>
-        </div>
+          <button @click="removeItem(item.product.id)" class="text-red-500 hover:text-red-700"><Trash /></button>
+        </router-link>
       </div>
 
       <div v-if="items.length > 0" class="border-t border-gray-200 p-4 space-y-2 bg-gray-50">
@@ -47,7 +47,7 @@
           <span>₹{{ total.toFixed(2) }}</span>
         </div>
         <div class="w-full flex text-center">
-          <router-link :to="{name: 'checkout'}" class="w-[100%] bg-[#95662d] text-white py-1 rounded" @click="checkout">Proceed to Checkout</router-link>
+          <router-link :to="{name: 'checkout'}" class="w-full bg-[#95662d] text-white py-1 rounded" @click="checkout">Proceed to Checkout</router-link>
         </div>
         <div class="flex justify-between">
           <button class="w-[45%] border py-1 rounded" @click="closeCart">Continue Shopping</button>
@@ -62,6 +62,7 @@
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore.js'
 import { computed,onMounted,provide,ref } from 'vue'
+import { Trash,ShoppingCart } from 'lucide-vue-next'
 
 const cartStore = useCartStore()
 const { cart, isCartOpen } = storeToRefs(cartStore)
@@ -69,7 +70,7 @@ const { cart, isCartOpen } = storeToRefs(cartStore)
 function closeCart() { cartStore.closeCart() }
 function checkout() { cartStore.closeCart() }
 const items = computed(() => {
-  console.log(cart.value.items); 
+  // console.log(cart.value.items); 
   return cart.value.items
 })
 const subtotal = computed(() => items.value.reduce((acc, i) => acc + i.product.price*3 * i.quantity, 0))

@@ -7,14 +7,21 @@
       <div class="flex-1 px-10 py-3 ">
         <div class="flex flex-col items-start justify-evenly h-[100%]">
           <h1 class="font-[500] text-[25px]">{{ productDetails.title }}</h1>
-          <span class="px-3 py-1 text-[10px] border-1 text-white bg-zinc-600 rounded-md">{{ productDetails.category }}</span>
+          <span class="px-3 py-1 text-[10px] border text-white bg-zinc-600 rounded-md">{{ productDetails.category }}</span>
           <p>Stock: <span class="text-green-400">Available</span></p>
           <p>Rating: {{ productDetails.rating }} ⭐</p>
           <h1 class="text-[25px]">₹{{ offerPrice }}</h1>
           <p class="text-green-800 text-[12px]"><span class="line-through text-[14px] text-black">₹{{ productPrice }}</span> {{100 - ((offerPrice/productPrice)*100)}}% off</p>
           <div class="flex gap-4">
-            <button type="button" @click="cartStore.addToCart(productDetails._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart </button>
-            <button type="button" @click="wishlistStore.addToWishlist(productDetails._id)" class="px-6 py-1 border-1 text-[#95662d] rounded-lg mt-2">Add to Wishlist</button>
+            <div v-if="cartStore.getItemById(productDetails._id)" class="flex items-center gap-3 mt-2">
+              <button class="bg-[#95662d] text-white px-4 py-1 rounded-lg" @click="cartStore.decreaseCartItem(productDetails._id)">-</button>
+              <span class="font-medium text-lg">{{ cartStore.getItemById(productDetails._id).quantity }}</span>
+              <button class="bg-[#95662d] text-white px-4 py-1 rounded-lg" @click="cartStore.addToCart(productDetails._id)">+</button>
+            </div>
+            <button v-else type="button" @click="cartStore.addToCart(productDetails._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart </button>
+            
+            <button v-if="wishlistStore.wishlist.some(p => p._id === productDetails._id)" type="button" @click="wishlistStore.removeFromWishlist(productDetails._id)" class="px-6 py-1 border text-red-500 border-red-500 rounded-lg mt-2 hover:bg-red-50">Remove from Wishlist</button>
+            <button v-else type="button" @click="wishlistStore.addToWishlist(productDetails._id)" class="px-6 py-1 border text-[#95662d] rounded-lg mt-2">Add to Wishlist</button>
           </div>
         </div>
       </div>

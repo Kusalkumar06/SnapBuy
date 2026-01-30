@@ -15,7 +15,7 @@
     </nav>
 
     <div class="flex items-center space-x-4">
-      <button @click="openCart" class="text-xl hover:bg-[#95662d] hover:text-white px-3 py-1 rounded-[10px]" aria-label="Shopping Cart" >🛒</button>
+      <button @click="openCart" class="relative text-xl  text-[#95662d] px-3 py-1 rounded-[10px]" aria-label="Shopping Cart"><ShoppingCart size="24"/><span class="absolute -top-1 -right-3 text-xs px-1.5 rounded-full">({{ cartStore.cart.items.length }})</span></button>
       <CartPage/>
       <div v-if="!userStore.isLoggedIn">
         <button @click="userStore.showLoginModal = true" class="px-3 py-1 text-[#95662d] font-medium border rounded hover:bg-[#95662d] hover:text-white transition duration-300">Login</button>
@@ -32,6 +32,7 @@
 <script setup>
 import { useCartStore } from '@/stores/cartStore';
 import { useUserStore } from '@/stores/userStore';
+import { ShoppingCart } from 'lucide-vue-next';
 import CartPage from '@/pages/CartPage.vue';
 import LoginModal from './LoginModal.vue';
 
