@@ -1,20 +1,13 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import "dotenv/config";
 import { CartModel } from "../models/cartModel.js";
 import { UserModel } from "../models/userModel.js";
 import { WishListModel } from "../models/wishListModel.js";
 
-const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const register = async (req, res) => {
   const { username, password, email } = req.body;
@@ -57,18 +50,17 @@ export const register = async (req, res) => {
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
 
     // 7. Send verification email (NON-BLOCKING)
-    transporter
-      .sendMail({
-        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    resend.emails
+      .send({
+        from: process.env.EMAIL_FROM || "onboarding@resend.dev",
         to: newUser.email,
         subject: "Verify your SnapBuy email",
-        text: `Welcome to SnapBuy!
-
-Please verify your email by clicking the link below:
-
-${verificationUrl}
-
-This link expires in 5 minutes.`,
+        html: `
+        <p>Welcome to SnapBuy!</p>
+        <p>Please verify your email by clicking the link below:</p>
+        <a href="${verificationUrl}">${verificationUrl}</a>
+        <p>This link expires in 5 minutes.</p>
+      `,
       })
       .catch((err) => console.error("Email send error:", err));
 
@@ -92,15 +84,31 @@ This link expires in 5 minutes.`,
   }
 };
 
-
 export const verifyEmail = async (req, res) => {
   const { token } = req.params;
 
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    console.log("Verifying Email - Received Token:", token);
+    console.log("Verifying Email - Hashed Token:", hashedToken);
+
+    // Check if user exists with token (ignoring expiry first for debugging)
     const userWithToken = await UserModel.findOne({
       emailVerificationToken: hashedToken,
     });
+    console.log(
+      "User found with token (ignoring expiry):",
+      userWithToken ? userWithToken.email : "None",
+    );
+    if (userWithToken) {
+      console.log("Token Expiry in DB:", userWithToken.emailVerificationExpire);
+      console.log("Current Time:", new Date());
+      console.log(
+        "Is Expired?:",
+        userWithToken.emailVerificationExpire < Date.now(),
+      );
+    }
 
     const user = await UserModel.findOne({
       emailVerificationToken: hashedToken,
@@ -198,22 +206,19 @@ export const forgotPassword = async (req, res) => {
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-      to: user.email,
-      subject: "SnapBuy Password Reset",
-      text: `You requested a password reset. Please go to this link to reset your password: \n\n ${resetUrl} \n\n This link expires in 15 minutes.`,
-    };
-
-    await transporter.sendMail(mailOptions);
+    resend.emails
+      .send({
+        from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+        to: user.email,
+        subject: "SnapBuy Password Reset",
+        html: `
+        <p>You requested a password reset.</p>
+        <p>Please go to this link to reset your password:</p>
+        <a href="${resetUrl}">${resetUrl}</a>
+        <p>This link expires in 15 minutes.</p>
+      `,
+      })
+      .catch((err) => console.error("Email send error:", err));
 
     res.status(200).json({
       message:
