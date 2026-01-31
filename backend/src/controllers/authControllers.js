@@ -7,68 +7,91 @@ import { CartModel } from "../models/cartModel.js";
 import { UserModel } from "../models/userModel.js";
 import { WishListModel } from "../models/wishListModel.js";
 
+transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+
 export const register = async (req, res) => {
   const { username, password, email } = req.body;
 
   try {
-    const existing_user = await UserModel.findOne({ username });
-    if (existing_user) {
+    // 1. Check if username already exists
+    const existingUser = await UserModel.findOne({ username });
+    if (existingUser) {
       return res.status(400).json({
-        message: "User already exists. Try using another name.",
         error: true,
+        message: "User already exists. Try another username.",
       });
     }
 
+    // 2. Generate email verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto
       .createHash("sha256")
       .update(verificationToken)
       .digest("hex");
 
-    const hashed_pass = await bcrypt.hash(password, 10);
+    // 3. Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 4. Create user
     const newUser = await UserModel.create({
       username,
       email,
-      password: hashed_pass,
+      password: hashedPassword,
+      isEmailVerified: false,
       emailVerificationToken: hashedToken,
       emailVerificationExpire: Date.now() + 5 * 60 * 1000, // 5 minutes
     });
 
+    // 5. Create related documents
     await CartModel.create({ user: newUser._id, items: [] });
     await WishListModel.create({ user: newUser._id, items: [] });
 
+    // 6. Create verification link
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
 
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // 7. Send verification email (NON-BLOCKING)
+    transporter
+      .sendMail({
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        to: newUser.email,
+        subject: "Verify your SnapBuy email",
+        text: `Welcome to SnapBuy!
 
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-      to: newUser.email,
-      subject: "SnapBuy Email Verification",
-      text: `Please verify your email by clicking the following link: \n\n ${verificationUrl} \n\n This link expires in 5 minutes.`,
-    };
+Please verify your email by clicking the link below:
 
-    await transporter.sendMail(mailOptions);
+${verificationUrl}
 
+This link expires in 5 minutes.`,
+      })
+      .catch((err) => console.error("Email send error:", err));
+
+    // 8. Respond immediately
     res.status(201).json({
-      message:
-        "User created successfully. Please check your email to verify your account.",
-      user: newUser,
       error: false,
+      message:
+        "User registered successfully. Please check your email to verify your account.",
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+      },
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      error: `Something went wrong during registration. Error: ${err}`,
+      error: true,
+      message: "Something went wrong during registration.",
     });
   }
 };
+
 
 export const verifyEmail = async (req, res) => {
   const { token } = req.params;
