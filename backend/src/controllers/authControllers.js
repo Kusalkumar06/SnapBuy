@@ -7,7 +7,7 @@ import { CartModel } from "../models/cartModel.js";
 import { UserModel } from "../models/userModel.js";
 import { WishListModel } from "../models/wishListModel.js";
 
-transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
     user: process.env.EMAIL_USER,
