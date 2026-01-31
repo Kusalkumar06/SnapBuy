@@ -1,10 +1,20 @@
-import {register,login} from "../controllers/authControllers.js"
-import {Router} from "express"
+import {
+  register,
+  login,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+} from "../controllers/authControllers.js";
+import { Router } from "express";
 
-const authRouter = Router()
+const authRouter = Router();
 
-authRouter.post("/login/",login)
+authRouter.post("/login/", login);
 
-authRouter.post("/register/",register)
+authRouter.post("/register/", register);
 
-export default authRouter
+authRouter.post("/forgot-password", forgotPassword);
+authRouter.post("/reset-password/:token", resetPassword);
+authRouter.post("/verify-email/:token", verifyEmail);
+
+export default authRouter;
