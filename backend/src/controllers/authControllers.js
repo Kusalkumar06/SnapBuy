@@ -1,19 +1,20 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { Resend } from "resend";
+
 import "dotenv/config";
 import { CartModel } from "../models/cartModel.js";
 import { UserModel } from "../models/userModel.js";
 import { WishListModel } from "../models/wishListModel.js";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from "../utils/emailService.js";
 
 export const register = async (req, res) => {
   const { username, password, email } = req.body;
 
   try {
-    // 1. Check if username already exists
     const existingUser = await UserModel.findOne({ username });
     if (existingUser) {
       return res.status(400).json({
@@ -22,49 +23,30 @@ export const register = async (req, res) => {
       });
     }
 
-    // 2. Generate email verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const hashedToken = crypto
       .createHash("sha256")
       .update(verificationToken)
       .digest("hex");
 
-    // 3. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4. Create user
     const newUser = await UserModel.create({
       username,
       email,
       password: hashedPassword,
       isEmailVerified: false,
       emailVerificationToken: hashedToken,
-      emailVerificationExpire: Date.now() + 5 * 60 * 1000, // 5 minutes
+      emailVerificationExpire: Date.now() + 24 * 60 * 60 * 1000,
     });
 
-    // 5. Create related documents
     await CartModel.create({ user: newUser._id, items: [] });
     await WishListModel.create({ user: newUser._id, items: [] });
 
-    // 6. Create verification link
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
 
-    // 7. Send verification email (NON-BLOCKING)
-    resend.emails
-      .send({
-        from: process.env.EMAIL_FROM || "onboarding@resend.dev",
-        to: newUser.email,
-        subject: "Verify your SnapBuy email",
-        html: `
-        <p>Welcome to SnapBuy!</p>
-        <p>Please verify your email by clicking the link below:</p>
-        <a href="${verificationUrl}">${verificationUrl}</a>
-        <p>This link expires in 5 minutes.</p>
-      `,
-      })
-      .catch((err) => console.error("Email send error:", err));
+    sendVerificationEmail(newUser.email, verificationUrl);
 
-    // 8. Respond immediately
     res.status(201).json({
       error: false,
       message:
@@ -89,26 +71,6 @@ export const verifyEmail = async (req, res) => {
 
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-
-    console.log("Verifying Email - Received Token:", token);
-    console.log("Verifying Email - Hashed Token:", hashedToken);
-
-    // Check if user exists with token (ignoring expiry first for debugging)
-    const userWithToken = await UserModel.findOne({
-      emailVerificationToken: hashedToken,
-    });
-    console.log(
-      "User found with token (ignoring expiry):",
-      userWithToken ? userWithToken.email : "None",
-    );
-    if (userWithToken) {
-      console.log("Token Expiry in DB:", userWithToken.emailVerificationExpire);
-      console.log("Current Time:", new Date());
-      console.log(
-        "Is Expired?:",
-        userWithToken.emailVerificationExpire < Date.now(),
-      );
-    }
 
     const user = await UserModel.findOne({
       emailVerificationToken: hashedToken,
@@ -184,8 +146,6 @@ export const forgotPassword = async (req, res) => {
   try {
     const user = await UserModel.findOne({ email });
 
-    // Assuming we don't want to reveal if user exists, we still send success.
-    // However, if user exists, we proceed with email sending.
     if (!user) {
       return res.status(200).json({
         message:
@@ -195,30 +155,17 @@ export const forgotPassword = async (req, res) => {
 
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // Hash token before saving to database
     user.resetPasswordToken = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
 
     await user.save();
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-    resend.emails
-      .send({
-        from: process.env.EMAIL_FROM || "onboarding@resend.dev",
-        to: user.email,
-        subject: "SnapBuy Password Reset",
-        html: `
-        <p>You requested a password reset.</p>
-        <p>Please go to this link to reset your password:</p>
-        <a href="${resetUrl}">${resetUrl}</a>
-        <p>This link expires in 15 minutes.</p>
-      `,
-      })
-      .catch((err) => console.error("Email send error:", err));
+    sendPasswordResetEmail(user.email, resetUrl);
 
     res.status(200).json({
       message:

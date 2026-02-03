@@ -1,13 +1,8 @@
 <script setup>
-  import {onMounted } from "vue";
   import ProductCard from "./ProductCard.vue";
   import { useProductStore } from "@/stores/productStore.js";
 
   const productStore = useProductStore();
-
-  onMounted(() => {
-    productStore.fetchProducts();
-  });
 
   const { category } = defineProps({
     category: String,
@@ -24,7 +19,7 @@
   </div>
   <div v-else>
       <div class="flex justify-center items-center h-60">
-        <div class="w-10 h-10 border-4 border-[#95662d] border-t-transparent rounded-full animate-spin"></div>
+        <div class="w-10 h-10 border-4 border-black dark:border-white border-t-transparent dark:border-t-transparent rounded-full animate-spin"></div>
       </div>
   </div>
 </template>

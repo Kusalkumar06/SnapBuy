@@ -1,11 +1,11 @@
 <template>
 
-  <div class="px-35 bg-gray-200 py-10">
+  <div class="px-35 bg-gray-200 dark:bg-gray-950 py-10 min-h-screen transition-colors duration-300">
     <div>
-      <h1 class="text-[38px] font-bold">Shop All Products</h1>
-      <p class="text-stone-600 font">Discover our complete collection of premium items</p>
+      <h1 class="text-[38px] font-bold dark:text-white">Shop All Products</h1>
+      <p class="text-stone-600 dark:text-gray-400 font">Discover our complete collection of premium items</p>
     </div>
-    <hr class="my-5 text-zinc-400"/>
+    <hr class="my-5 text-zinc-400 dark:text-gray-700"/>
     <div class="flex">
       <div class="w-75">
         <FilterCom/>
@@ -38,7 +38,7 @@ const route = useRoute()
   provide('filters', filters)
 
   onMounted(() => {
-  // console.log(route.query)
+
   if (route.query.category) {
     filters.category = route.query.category
   }

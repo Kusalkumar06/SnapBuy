@@ -4,13 +4,13 @@
       <h1 class="text-[25px]">Customer Reviews</h1>
     </div>
 
-    <div v-if="reviews.length === 0" class="text-gray-500 h-80 flex items-center justify-center">
+    <div v-if="reviews.length === 0" class="text-gray-500 h-95 flex items-center justify-center">
       No reviews yet
     </div>
 
-    <div v-else class="max-h-80 flex flex-col overflow-y-auto">
+    <div v-else class="max-h-95 flex flex-col overflow-y-auto">
       <div v-for="review in reviews" :key="review.name" class="my-4 pr-3">
-        <div class="flex items-center justify-between shadow-lg border-1 border-zinc-300 p-3 rounded-md">
+        <div class="flex items-center justify-between shadow-lg border border-zinc-300 p-3 rounded-md">
           <div class="flex gap-3 items-center">
             <div :class="`${colors[Math.floor(Math.random() * colors.length)]} text-4xl px-3 py-1 rounded-[50%] text-white`">
               {{ review.name[0] }}
@@ -28,11 +28,11 @@
     </div>
 
     <div class="text-end pr-2">
-      <button class="text-white px-4 py-2 rounded bg-[#95662d]" @click="isReviewOpen = true">Add a Review</button>
+      <button class="text-white px-4 py-2 rounded bg-black border border-white " @click="isReviewOpen = true">Add a Review</button>
     </div>
 
-    <div v-if="isReviewOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div class="bg-white shadow-md rounded-lg p-4 mt-6 w-80 h-80 ">
+    <div v-if="isReviewOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:text-white">
+      <div class="bg-white dark:bg-black/90 shadow-md rounded-lg p-4 mt-6 w-80 h-80 ">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-semibold">Add a Review</h2>
           <button @click="isReviewOpen = false">&times;</button>
@@ -41,8 +41,8 @@
           <div class="mb-4">
             <label class="block mb-1 font-medium">Rating</label>
             <select v-model="rating" class="border p-2 w-full rounded">
-              <option value="">Select...</option>
-              <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
+              <option value="" class="dark:text-black">Select...</option>
+              <option v-for="n in 5" :key="n" :value="n" class="dark:text-black">{{ n }}</option>
             </select>
           </div>
 
@@ -54,7 +54,7 @@
           <p >{{ errorMessage }}</p>
 
           <div class="text-center">
-            <button type="submit" class="border-1  text-zinc-600  px-4 py-1 rounded hover:text-white hover:bg-zinc-700">Add</button>
+            <button type="submit" class="border text-zinc-600  px-4 py-1 rounded hover:text-white hover:bg-zinc-700">Add</button>
           </div>
         </form>
       </div>

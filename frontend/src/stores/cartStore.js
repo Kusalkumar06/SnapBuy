@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useToast } from 'vue-toastification';
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import { useToast } from 'vue-toastification'
+
+const API_URL = import.meta.env.VITE_API_BASE_URL
 
 export const useCartStore = defineStore('cartStore', {
   state: () => ({
@@ -13,8 +15,8 @@ export const useCartStore = defineStore('cartStore', {
   getters: {
     totalItems: (state) => state.cart.items.reduce((acc, item) => acc + item.quantity, 0),
 
-    getItemById: (state) => (productId) => state.cart.items.find((item) => item.product._id === productId),
-
+    getItemById: (state) => (productId) =>
+      state.cart.items.find((item) => item.product._id === productId),
   },
   actions: {
     getAuthHeader() {
@@ -23,18 +25,18 @@ export const useCartStore = defineStore('cartStore', {
     },
 
     async fetchCart() {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
 
       try {
-        const res = await axios.get("https://snapbuy-s5tb.onrender.com/cart/getCart", { headers: this.getAuthHeader() });
-        this.cart.items = [...res.data.cart.items];
-        this.cart.totalPrice = res.data.cart.total;
+        const res = await axios.get(`${API_URL}/cart/getCart`, { headers: this.getAuthHeader() })
+        this.cart.items = [...res.data.cart.items]
+        this.cart.totalPrice = res.data.cart.total
       } catch (err) {
         console.log(err)
-        this.error = err.response?.data?.message || "Failed to fetch cart";
+        this.error = err.response?.data?.message || 'Failed to fetch cart'
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -50,16 +52,15 @@ export const useCartStore = defineStore('cartStore', {
         return
       }
 
-
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
       try {
         const res = await axios.post(
-          "https://snapbuy-s5tb.onrender.com/cart/add",
+          `${API_URL}/cart/add`,
           { productId },
-          { headers: this.getAuthHeader() }
-        );
-        this.cart = res.data.cart;
+          { headers: this.getAuthHeader() },
+        )
+        this.cart = res.data.cart
 
         toast.success('Product added to cart successfully!', {
           timeout: 1000,
@@ -67,47 +68,69 @@ export const useCartStore = defineStore('cartStore', {
         })
       } catch (err) {
         console.log(err)
-        this.error = err.response?.data?.message || "Failed to add to cart";
+        this.error = err.response?.data?.message || 'Failed to add to cart'
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
     async decreaseCartItem(productId) {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
       try {
         const res = await axios.post(
-          "https://snapbuy-s5tb.onrender.com/cart/decrease",
+          `${API_URL}/cart/decrease`,
           { productId },
-          { headers: this.getAuthHeader() }
-        );
-        this.cart = res.data.cart;
+          { headers: this.getAuthHeader() },
+        )
+        this.cart = res.data.cart
       } catch (err) {
-        this.error = err.response?.data?.message || "Failed to decrease item";
+        this.error = err.response?.data?.message || 'Failed to decrease item'
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
     async clearCart() {
-      this.loading = true;
-      this.error = null;
+      this.loading = true
+      this.error = null
       try {
-        const res = await axios.post(
-          "https://snapbuy-s5tb.onrender.com/cart/clear",
-          {},
-          { headers: this.getAuthHeader() }
-        );
-        this.cart = res.data.cart;
+        const res = await axios.post(`${API_URL}/cart/clear`, {}, { headers: this.getAuthHeader() })
+        this.cart = res.data.cart
       } catch (err) {
-        this.error = err.response?.data?.message || "Failed to clear cart";
+        this.error = err.response?.data?.message || 'Failed to clear cart'
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
-    openCart() { this.isCartOpen = true },
-    closeCart() { this.isCartOpen = false },
-  }
+    async removeItem(productId) {
+      this.loading = true
+      this.error = null
+      console.log(productId)
+      try {
+        const res = await axios.post(
+          `${API_URL}/cart/remove`,
+          { productId },
+          { headers: this.getAuthHeader() },
+        )
+        this.cart = res.data.cart
+        const toast = useToast()
+        toast.success('Item removed from cart', { timeout: 1500 })
+      } catch (err) {
+        this.error = err.response?.data?.message || 'Failed to remove item'
+        const toast = useToast()
+        toast.error(this.error)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    openCart() {
+      this.isCartOpen = true
+    },
+    closeCart() {
+      this.isCartOpen = false
+    },
+  },
 })

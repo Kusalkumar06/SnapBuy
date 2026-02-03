@@ -1,13 +1,13 @@
 <template>
   <div class="px-5">
     <div>
-      <h1 class="text-[28px] font-[500]">Featured Collection</h1>
+      <h1 class="text-[28px] font-medium">Featured Collection</h1>
       <p class="text-[14px] text-zinc-600 font">Explore our handpicked selection of premium items</p>
     </div>
 
     <div v-if="paginatedProducts.length <=0">
       <div class="flex justify-center items-center h-60">
-        <div class="w-10 h-10 border-4 border-[#95662d] border-t-transparent rounded-full animate-spin"></div>
+        <div class="w-10 h-10 border-4 border-black dark:border-white border-t-transparent dark:border-t-transparent rounded-full animate-spin"></div>
       </div>
     </div>
     <div v-else>
@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-  import { inject,computed,ref } from 'vue';
+  import { inject,computed,ref,watch } from 'vue';
   import { useProductStore } from '@/stores/productStore';
   import ProductCard from '@/components/ProductCard.vue';
 
@@ -36,6 +36,11 @@
   const filters = inject('filters');
   const currentPage = ref(1)
   const itemsPerPage = ref(6)
+
+  watch(currentPage, () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
   
   
   const filteredProducts = computed(() => {

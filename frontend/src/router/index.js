@@ -23,47 +23,88 @@ const router = createRouter({
     },
     {
       path: '/wishlist',
-      name: "wishlist",
+      name: 'wishlist',
       component: WishlistPage,
-      meta: { requiresAuth: true } ,
+      meta: { requiresAuth: true },
     },
     {
       path: '/cart',
       name: 'cart',
       component: CartPage,
-      meta: { requiresAuth: true } ,
+      meta: { requiresAuth: true },
     },
     {
       path: '/contact',
       name: 'contact',
       component: ContactPage,
-      meta: { requiresAuth: true } ,
+      meta: { requiresAuth: true },
     },
     {
       path: '/shop',
       name: 'shop',
       component: ShopPage,
-      meta: { requiresAuth: true } ,
+      meta: { requiresAuth: true },
     },
     {
       path: '/checkout',
       name: 'checkout',
       component: () => import('@/pages/CheckoutPage.vue'),
-      meta: { requiresAuth: true } ,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/pages/LoginPage.vue'),
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('@/pages/ForgotPasswordPage.vue'),
+    },
+    {
+      path: '/reset-password/:token',
+      name: 'reset-password',
+      component: () => import('@/pages/ResetPasswordPage.vue'),
+    },
+    {
+      path: '/verify-email/:token',
+      name: 'verify-email',
+      component: () => import('@/pages/VerifyEmailPage.vue'),
     },
     {
       path: '/product/:id',
       name: 'productDetails',
       component: () => import('@/components/ProductDetails.vue'),
       props: true,
-      meta: { requiresAuth: true } ,
+      meta: { requiresAuth: true },
     },
-    { 
-      path: '/:pathMatch(.*)*', 
-      name: 'NotFound', 
+    {
+      path: '/orders',
+      name: 'my-orders',
+      component: () => import('@/pages/MyOrdersPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/orders/:id',
+      name: 'order-details',
+      component: () => import('@/pages/OrderDetailsPage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@/pages/ProfilePage.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
       component: () => import('@/pages/NotFoundPage.vue'),
-    }
+    },
   ],
+  scrollBehavior() {
+    return { top: 0, behavior: 'smooth' }
+  },
 })
 
 router.beforeEach((to, from, next) => {
@@ -72,9 +113,9 @@ router.beforeEach((to, from, next) => {
 
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
     toast.error("You don't have access to this page. Please login.")
-    next(false) 
+    next(false)
   } else {
-    next() 
+    next()
   }
 })
 

@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     unique: true,
   },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
   isEmailVerified: {
@@ -24,6 +29,8 @@ const userSchema = new mongoose.Schema({
   },
   emailVerificationToken: String,
   emailVerificationExpire: Date,
+}, {
+    timestamps: true
 });
 
 export const UserModel = mongoose.model("User", userSchema, "users");

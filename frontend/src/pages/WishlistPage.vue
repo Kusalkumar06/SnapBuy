@@ -1,11 +1,11 @@
 <template>
   <div class="max-w-6xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-semibold mb-2">My Wishlist ❤️</h1>
-    <p class="font text-zinc-700 mb-6">Turn your wishlist into reality — buy it today!</p>
+    <h1 class="text-3xl font-semibold mb-2 dark:text-white">My Wishlist ❤️</h1>
+    <p class="font text-zinc-700 dark:text-gray-400 mb-6">Turn your wishlist into reality — buy it today!</p>
 
     <div v-if="wishlistStore.loading" class="text-gray-500">
-      <div class="flex justify-center items-center h-80">
-        <div class="w-10 h-10 border-4 border-[#95662d] border-t-transparent rounded-full animate-spin"></div>
+      <div class="flex justify-center items-center h-60">
+        <div class="w-10 h-10 border-4 border-black dark:border-white border-t-transparent dark:border-t-transparent rounded-full animate-spin"></div>
       </div>
     </div>
 
@@ -26,18 +26,18 @@
               <p class="text-stone-500 text-[12px]">⭐ {{ product.rating }}</p>
             </div>
             <h1 class="font-semibold text-[#2e251f]">{{ product.title }}</h1>
-            <p class="text-gray-600 my-1 font-[500]">₹{{ (product.price*3).toFixed(2) }}    <span class="text-[12px] line-through">₹{{ (product.price*4).toFixed(2) }}</span></p>
+            <p class="text-gray-600 my-1 font-medium">₹{{ (product.price*3).toFixed(2) }}    <span class="text-[12px] line-through">₹{{ (product.price*4).toFixed(2) }}</span></p>
           </div>
         </router-link>
 
         <div class="text-center pb-2 flex flex-col gap-2 p-2">
           <div v-if="cartStore.getItemById(product._id)" class="flex items-center justify-center gap-2 mt-2">
-            <button class="bg-[#95662d] text-white px-3 py-1 rounded" @click="cartStore.decreaseCartItem(product._id)">-</button>
-            <span class="font-medium">{{ cartStore.getItemById(product._id).quantity }}</span>
-            <button class="bg-[#95662d] text-white px-3 py-1 rounded" @click="cartStore.addToCart(product._id)">+</button>
+            <button class="bg-black text-white dark:bg-white dark:text-black px-3 py-1 rounded hover:bg-gray-800 dark:hover:bg-gray-200 transition" @click="cartStore.decreaseCartItem(product._id)">-</button>
+            <span class="font-medium dark:text-white">{{ cartStore.getItemById(product._id).quantity }}</span>
+            <button class="bg-black text-white dark:bg-white dark:text-black px-3 py-1 rounded hover:bg-gray-800 dark:hover:bg-gray-200 transition" @click="cartStore.addToCart(product._id)">+</button>
           </div>
-          <button v-else type="button" @click="cartStore.addToCart(product._id)" class="bg-[#95662d] px-6 py-1 rounded-lg mt-2 text-white">Add to cart</button>
-          <button class="mt-auto text-red-500 hover:text-white border  py-1 hover:bg-red-600 transition rounded-lg" @click="wishlistStore.removeFromWishlist(product._id)">Remove from Wishlist</button>
+          <button v-else type="button" @click="cartStore.addToCart(product._id)" class="bg-black text-white dark:bg-white dark:text-black px-6 py-1 rounded-lg mt-2 hover:bg-gray-800 dark:hover:bg-gray-200 transition">Add to cart</button>
+          <button class="mt-auto text-red-500 hover:text-white border dark:border-gray-600 py-1 hover:bg-red-600 transition rounded-lg" @click="wishlistStore.removeFromWishlist(product._id)">Remove from Wishlist</button>
         </div>
       </div>
     </div>
