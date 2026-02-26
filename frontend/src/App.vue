@@ -11,7 +11,7 @@
   const route = useRoute();
 
   const showNavbar = computed(() => {
-    return ![ 'forgot-password', 'reset-password', 'new-products'].includes(route.name);
+    return !['login', 'forgot-password', 'reset-password', 'new-products'].includes(route.name);
   });
 
   const giveTopMargin = computed(() => {
