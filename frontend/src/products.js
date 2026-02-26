@@ -999,5 +999,4 @@ const products = [{
     createdAt: new Date("2025-07-08"),
   }]
 const productsJSON = JSON.stringify(products);
-console.log(productsJSON);
 export default productsJSON

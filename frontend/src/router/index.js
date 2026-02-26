@@ -97,6 +97,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/new-products',
+      name: 'new-products',
+      component: () => import('@/pages/NewProductsPage.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/pages/NotFoundPage.vue'),

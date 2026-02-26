@@ -11,15 +11,15 @@
   const route = useRoute();
 
   const showNavbar = computed(() => {
-    return ![ 'forgot-password', 'reset-password'].includes(route.name);
+    return ![ 'forgot-password', 'reset-password', 'new-products'].includes(route.name);
   });
 
   const giveTopMargin = computed(() => {
-    return !['login', 'forgot-password', 'reset-password'].includes(route.name);
+    return !['login', 'forgot-password', 'reset-password', 'new-products'].includes(route.name);
   });
 
   const showFooter = computed(() => {
-    return !['login', 'forgot-password', 'reset-password'].includes(route.name);
+    return !['login', 'forgot-password', 'reset-password', 'new-products'].includes(route.name);
   });
 
   onMounted(() => {

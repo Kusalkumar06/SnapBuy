@@ -23,7 +23,7 @@
             <p class="text-stone-500 dark:text-gray-400 text-[12px]">⭐ {{ productDetails.rating }}</p>
           </div>
           <h1 class="font-semibold text-[#2e251f] dark:text-gray-200">{{ productDetails.title }}</h1>
-          <p class="text-gray-600 dark:text-gray-400 my-1 font-medium">₹{{ (productDetails.price*3).toFixed(2) }}    <span class="text-[12px] line-through text-gray-400 dark:text-gray-600">₹{{ (productDetails.price*4).toFixed(2) }}</span></p>
+          <p class="text-gray-600 dark:text-gray-400 my-1 font-medium">₹{{ ((Number(productDetails.pricePaise) / 100) || Number(productDetails.price || 0)).toFixed(2) }}    <span class="text-[12px] line-through text-gray-400 dark:text-gray-600">₹{{ (((Number(productDetails.pricePaise) / 100) || Number(productDetails.price || 0))*1.33).toFixed(2) }}</span></p>
         </div>
       </router-link>
       <div class="text-center pb-5">

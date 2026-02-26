@@ -9,10 +9,11 @@
       </div>
 
 
-      <div v-else-if="orderStore.error" class="text-center py-20">
-        <div class="text-red-500 text-xl mb-4">Failed to load orders</div>
-        <p class="text-gray-500 dark:text-gray-400">{{ orderStore.error }}</p>
-        <button @click="orderStore.fetchMyOrders()" class="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+      <div v-else-if="orderStore.error" class="text-center py-20 bg-red-50 dark:bg-red-900/10 rounded-3xl border border-red-100 dark:border-red-900/20">
+        <div class="text-red-500 text-6xl mb-4">⚠️</div>
+        <div class="text-red-600 dark:text-red-400 text-xl font-bold mb-2">Failed to load orders</div>
+        <p class="text-gray-600 dark:text-gray-400 max-w-md mx-auto">{{ orderStore.error || 'There was an issue connecting to the server. Please check your internet connection and try again.' }}</p>
+        <button @click="orderStore.fetchMyOrders()" class="mt-6 px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all">
           Try Again
         </button>
       </div>
@@ -52,7 +53,7 @@
 
 
             <div class="flex flex-col md:items-end gap-1">
-               <div class="text-lg font-bold">₹{{ order.totalPrice.toFixed(2) }}</div>
+             <div class="text-lg font-bold">₹{{ ((Number(order.totalAmountPaise) || Number(order.totalAmount * 100) || Number(order.totalPrice * 100) || 0) / 100).toFixed(2) }}</div>
                <div class="text-xs flex items-center gap-1.5">
                  <span class="text-gray-400">Payment:</span>
                  <span :class="order.paymentStatus === 'paid' ? 'text-green-600 dark:text-green-400' : 'text-orange-500'" class="font-medium capitalize">

@@ -18,7 +18,7 @@
           <img :src="item.product.image" class="w-20 h-20 object-cover rounded" />
           <div class="flex-1 min-w-0">
             <h3 class="font-semibold text-sm truncate dark:text-white">{{ item.product.title }}</h3>
-            <p class="text-sm font-bold text-blue-600 dark:text-blue-400 mt-1">₹{{ (item.product.price*3).toFixed(2) }}</p>
+            <p class="text-sm font-bold text-blue-600 dark:text-blue-400 mt-1">₹{{ ((Number(item.product.pricePaise) / 100) || Number(item.product.price || 0)).toFixed(2) }}</p>
             <div class="flex items-center gap-2 mt-2">
               <button class="border dark:border-gray-600 px-2 rounded text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" @click="cartStore.decreaseCartItem(item.product._id)">-</button>
               <span class="text-sm font-medium w-6 text-center dark:text-white">{{ item.quantity }}</span>
@@ -73,7 +73,7 @@ const items = computed(() => {
  
   return cart.value.items
 })
-const subtotal = computed(() => items.value.reduce((acc, i) => acc + i.product.price*3 * i.quantity, 0))
+const subtotal = computed(() => cartStore.cart.totalPaise / 100)
 const tax = computed(() => subtotal.value * 0.1)
 const shipping = computed(() => (items.value.length > 0 ? 10 : 0))
 const total = computed(() => subtotal.value + tax.value + shipping.value)

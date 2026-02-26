@@ -26,7 +26,7 @@
               <p class="text-stone-500 text-[12px]">⭐ {{ product.rating }}</p>
             </div>
             <h1 class="font-semibold text-[#2e251f]">{{ product.title }}</h1>
-            <p class="text-gray-600 my-1 font-medium">₹{{ (product.price*3).toFixed(2) }}    <span class="text-[12px] line-through">₹{{ (product.price*4).toFixed(2) }}</span></p>
+            <p class="text-gray-600 my-1 font-medium">₹{{ product.price.toFixed(2) }}    <span class="text-[12px] line-through">₹{{ (product.price*1.33).toFixed(2) }}</span></p>
           </div>
         </router-link>
 

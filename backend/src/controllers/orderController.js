@@ -19,24 +19,32 @@ export const createOrder = async (req, res) => {
     }
 
     const orderItems = [];
-    let totalPrice = 0;
+    let totalAmountPaise = 0;
 
     for (const item of cart.items) {
       if (!item.product) continue;
 
-      const itemTotal = item.product.price * item.quantity;
+      const pricePaise =
+        Number(item.product.pricePaise) ||
+        Math.round(Number(item.product.price || 0) * 100);
+      const itemTotalPaise = pricePaise * item.quantity;
 
       orderItems.push({
         product: item.product._id,
         title: item.product.title,
         image: item.product.image,
-        price: item.product.price,
+        pricePaise: pricePaise,
         quantity: item.quantity,
-        totalPrice: itemTotal,
+        totalPricePaise: itemTotalPaise,
       });
 
-      totalPrice += itemTotal;
+      totalAmountPaise += itemTotalPaise;
     }
+
+    const subtotalPaise = totalAmountPaise;
+    const taxPaise = Math.round(subtotalPaise * 0.1);
+    const shippingPaise = 1000; // 10 Rupees
+    totalAmountPaise = subtotalPaise + taxPaise + shippingPaise;
 
     if (orderItems.length === 0) {
       return res.status(400).json({ message: "No valid products in cart" });
@@ -45,7 +53,9 @@ export const createOrder = async (req, res) => {
     const newOrder = new OrderModel({
       user: userId,
       orderItems,
-      totalPrice,
+      totalAmountPaise,
+      taxPaise,
+      shippingPaise,
       shippingAddress,
       paymentMethod: paymentMethod || "COD",
       paymentStatus: "pending",
@@ -54,11 +64,10 @@ export const createOrder = async (req, res) => {
 
     const savedOrder = await newOrder.save();
 
-    cart.items = [];
-    cart.save();
+    // Clear cart after successful order
     await CartModel.updateOne(
       { user: userId },
-      { $set: { items: [], total: 0 } },
+      { $set: { items: [], totalPaise: 0 } },
     );
 
     res.status(201).json({
@@ -76,9 +85,9 @@ export const getMyOrders = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    const orders = await OrderModel.find({ user: userId })
-      .sort({ createdAt: -1 })
-      .select("_id totalPrice orderStatus paymentStatus createdAt");
+    const orders = await OrderModel.find({ user: userId }).sort({
+      createdAt: -1,
+    });
 
     res.status(200).json({
       success: true,

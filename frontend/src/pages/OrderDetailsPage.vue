@@ -74,12 +74,31 @@
                      {{ orderStore.currentOrder.paymentStatus }}
                    </span>
                  </div>
-                 <div class="pt-3 border-t border-dashed border-gray-200 dark:border-gray-700 mt-2">
-                   <div class="flex justify-between items-end">
-                     <span class="font-bold">Total Amount</span>
-                     <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">₹{{ orderStore.currentOrder.totalPrice.toFixed(2) }}</span>
-                   </div>
-                 </div>
+                  <div class="pt-2 border-t border-dashed border-gray-100 dark:border-gray-800/50 mt-2 space-y-2">
+                    <div class="flex justify-between text-xs text-gray-500">
+                      <span>Subtotal</span>
+                      <span>₹{{ (
+                        (Number(orderStore.currentOrder.totalAmountPaise) - 
+                         Number(orderStore.currentOrder.taxPaise || 0) - 
+                         Number(orderStore.currentOrder.shippingPaise || 0)) / 100
+                      ).toFixed(2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500">
+                      <span>Tax (10%)</span>
+                      <span>₹{{ (Number(orderStore.currentOrder.taxPaise || 0) / 100).toFixed(2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500">
+                      <span>Shipping</span>
+                      <span>₹{{ (Number(orderStore.currentOrder.shippingPaise || 0) / 100).toFixed(2) }}</span>
+                    </div>
+                    <div class="h-px bg-gray-100 dark:bg-gray-800 my-2"></div>
+                    <div class="flex justify-between items-end pt-1">
+                      <span class="font-bold">Total Amount</span>
+                       <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                         ₹{{ (Number(orderStore.currentOrder.totalAmountPaise || 0) / 100).toFixed(2) }}
+                       </span>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -97,11 +116,15 @@
 
             <div class="flex-1">
               <h3 class="font-medium text-lg leading-tight mb-1">{{ item.title }}</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Qty: {{ item.quantity }} × ₹{{ item.price }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Qty: {{ item.quantity }} × ₹{{ ((Number(item.pricePaise) || (Number(item.price) * 100) || 0) / 100).toFixed(2) }}
+              </p>
             </div>
 
             <div class="sm:text-right">
-              <p class="font-bold text-lg">₹{{ (item.price * item.quantity).toFixed(2) }}</p>
+              <p class="font-bold text-lg">
+                ₹{{ ((Number(item.totalPricePaise) || (Number(item.price) * Number(item.quantity) * 100) || 0) / 100).toFixed(2) }}
+              </p>
             </div>
           </div>
         </div>

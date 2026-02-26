@@ -224,7 +224,7 @@
 
                 <div class="flex items-center justify-between md:gap-8">
                   <div class="text-right">
-                    <p class="font-bold">₹{{ order.totalPrice.toFixed(2) }}</p>
+                    <p class="font-bold">₹{{ ((Number(order.totalAmountPaise) || Number(order.totalAmount * 100) || Number(order.totalPrice * 100) || 0) / 100).toFixed(2) }}</p>
                     <p class="text-xs text-gray-500">{{ order.paymentStatus }}</p>
                   </div>
                   <ChevronRight class="w-5 h-5 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />

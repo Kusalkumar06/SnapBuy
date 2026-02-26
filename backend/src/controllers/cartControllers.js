@@ -3,8 +3,12 @@ import { ProductModel } from "../models/productsmodel.js";
 
 const calculateCartTotal = (items) => {
   return items.reduce((total, item) => {
-    if (item.product && item.product.price) {
-      total += item.product.price * item.quantity;
+    if (item.product) {
+      // Prefer pricePaise if available, otherwise fallback to price * 100
+      const unitPricePaise =
+        Number(item.product.pricePaise) ||
+        Math.round(Number(item.product.price || 0) * 100);
+      total += unitPricePaise * item.quantity;
     }
     return total;
   }, 0);
@@ -16,24 +20,24 @@ export const getCart = async (req, res) => {
 
     const cart = await CartModel.findOne({ user: userId }).populate(
       "items.product",
-      "title price image category description",
+      "title price pricePaise image category description",
     );
 
     if (!cart) {
       return res.status(404).json({
         success: false,
         message: "Cart not found for this user",
-        cart: { items: [], totalPrice: 0 },
+        cart: { items: [], totalPaise: 0 },
       });
     }
 
-    const totalPrice = calculateCartTotal(cart.items);
+    const totalPaise = calculateCartTotal(cart.items);
 
     res.status(200).json({
       success: true,
       cart: {
         items: cart.items,
-        totalPrice,
+        totalPaise,
       },
     });
   } catch (error) {
@@ -80,7 +84,7 @@ export const addToCart = async (req, res) => {
 
     const updatedCart = await CartModel.findOne({ user: userId }).populate(
       "items.product",
-      "title price image category description",
+      "title price pricePaise image category description",
     );
 
     const totalPrice = calculateCartTotal(updatedCart.items);
@@ -89,7 +93,7 @@ export const addToCart = async (req, res) => {
       success: true,
       cart: {
         items: updatedCart.items,
-        totalPrice,
+        totalPaise: totalPrice, // Variable name in function is still totalPrice (calculated from paise), but key should be totalPaise. Wait, let me check calculation.
       },
     });
   } catch (error) {
@@ -131,7 +135,7 @@ export const decreaseCartItem = async (req, res) => {
 
     const updatedCart = await CartModel.findOne({ user: userId }).populate(
       "items.product",
-      "title price image category description",
+      "title price pricePaise image category description",
     );
 
     const totalPrice = calculateCartTotal(updatedCart.items);
@@ -140,7 +144,7 @@ export const decreaseCartItem = async (req, res) => {
       success: true,
       cart: {
         items: updatedCart.items,
-        totalPrice,
+        totalPaise: totalPrice,
       },
     });
   } catch (error) {
@@ -156,7 +160,6 @@ export const removeCartItem = async (req, res) => {
   try {
     const userId = req.user.userId;
     const { productId } = req.body;
-    
 
     const cart = await CartModel.findOne({ user: userId });
     if (!cart) {
@@ -182,17 +185,17 @@ export const removeCartItem = async (req, res) => {
 
     const updatedCart = await CartModel.findOne({ user: userId }).populate(
       "items.product",
-      "title price image category description",
+      "title price pricePaise image category description",
     );
 
-    const totalPrice = calculateCartTotal(updatedCart.items);
+    const totalPaise = calculateCartTotal(updatedCart.items);
 
     res.status(200).json({
       success: true,
       message: "Item removed from cart",
       cart: {
         items: updatedCart.items,
-        totalPrice,
+        totalPaise,
       },
     });
   } catch (error) {
@@ -213,17 +216,19 @@ export const clearCart = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Cart not found for this user",
+        cart: { items: [], totalPaise: 0 },
       });
     }
 
     cart.items = [];
+    cart.totalPaise = 0;
     await cart.save();
 
     res.status(200).json({
       success: true,
       cart: {
         items: [],
-        totalPrice: 0,
+        totalPaise: 0,
       },
     });
   } catch (error) {

@@ -149,84 +149,48 @@
 
 
         <div class="lg:col-span-5">
-          <div class="bg-white dark:bg-linear-to-br dark:from-[#1A1D2D] dark:to-[#141625] rounded-3xl p-4 md:p-5 shadow-xl border border-gray-100 dark:border-gray-800">
-            
-            <h2 class="text-lg font-bold mb-3 flex items-center gap-2">
-              <span class="w-1 h-5 bg-blue-600 dark:bg-blue-500 rounded-full"></span>
-              Payment Information
-            </h2>
-            
-
-            <div class="space-y-2 mb-4">
-              <label 
-                class="group relative flex items-center p-2.5 rounded-xl border-2 cursor-pointer transition-all duration-300"
-                :class="paymentMethod === 'cod' 
-                  ? 'border-blue-600 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-500/10' 
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-transparent'"
-              >
-                <div class="flex items-center gap-3 w-full">
-                  <div class="relative flex items-center justify-center">
-                    <input type="radio" value="cod" v-model="paymentMethod" class="peer appearance-none w-3.5 h-3.5 border-2 border-gray-400 rounded-full checked:border-blue-600 dark:checked:border-blue-500 checked:bg-blue-600 dark:checked:bg-blue-500 transition-all" />
-                    <div class="absolute w-1.5 h-1.5 bg-white rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
-                  </div>
-                  <div class="flex-1">
-                    <span class="font-semibold text-sm block">Cash on Delivery</span>
-                    <span class="text-[10px] text-gray-500 dark:text-gray-400">Pay on arrival</span>
-                  </div>
+            <div class="bg-white dark:bg-[#1A1D2D] rounded-2xl p-4 md:p-5 border border-gray-100 dark:border-gray-800 shadow-sm mb-4">
+              <h2 class="text-lg font-bold mb-2 flex items-center gap-2">
+                <span class="w-1 h-5 bg-blue-600 dark:bg-blue-500 rounded-full"></span>
+                Order Method
+              </h2>
+              <div class="flex items-center gap-3 p-3 bg-blue-50/50 dark:bg-blue-500/10 rounded-xl border-2 border-blue-600 dark:border-blue-500">
+                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                 </div>
-              </label>
-
-              <label 
-                class="group relative flex items-center p-2.5 rounded-xl border-2 cursor-pointer transition-all duration-300"
-                :class="paymentMethod === 'card' 
-                  ? 'border-blue-600 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-500/10' 
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-transparent'"
-              >
-                <div class="flex items-center gap-3 w-full">
-                  <div class="relative flex items-center justify-center">
-                    <input type="radio" value="card" v-model="paymentMethod" class="peer appearance-none w-3.5 h-3.5 border-2 border-gray-400 rounded-full checked:border-blue-600 dark:checked:border-blue-500 checked:bg-blue-600 dark:checked:bg-blue-500 transition-all" />
-                    <div class="absolute w-1.5 h-1.5 bg-white rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
-                  </div>
-                  <div class="flex-1">
-                    <span class="font-semibold text-sm block">Credit / Debit Card</span>
-                    <span class="text-[10px] text-gray-500 dark:text-gray-400">Secure payment</span>
-                  </div>
-
-                  <div class="hidden sm:block">
-                     <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                  </div>
+                <div>
+                  <span class="font-semibold text-sm block">Cash on Delivery</span>
+                  <span class="text-[10px] text-gray-500 dark:text-gray-400">Pay when your order arrives</span>
                 </div>
-              </label>
+              </div>
+            </div>
 
-              <label 
-                class="group relative flex items-center p-2.5 rounded-xl border-2 cursor-pointer transition-all duration-300"
-                :class="paymentMethod === 'upi' 
-                  ? 'border-blue-600 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-500/10' 
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-transparent'"
-              >
-                <div class="flex items-center gap-3 w-full">
-                  <div class="relative flex items-center justify-center">
-                    <input type="radio" value="upi" v-model="paymentMethod" class="peer appearance-none w-3.5 h-3.5 border-2 border-gray-400 rounded-full checked:border-blue-600 dark:checked:border-blue-500 checked:bg-blue-600 dark:checked:bg-blue-500 transition-all" />
-                    <div class="absolute w-1.5 h-1.5 bg-white rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
-                  </div>
-                  <div class="flex-1">
-                    <span class="font-semibold text-sm block">UPI / Wallet</span>
-                    <span class="text-[10px] text-gray-500 dark:text-gray-400">Google Pay, PhonePe</span>
-                  </div>
+
+
+
+            <h3 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Items you're buying</h3>
+            <div class="space-y-3 mb-4 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+              <div v-for="item in cartStore.cart.items" :key="item.product._id" class="flex gap-3 items-center">
+                <div class="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden shrink-0">
+                  <img :src="item.product.image" class="w-full h-full object-cover">
                 </div>
-              </label>
-
-
-
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-medium truncate dark:text-white">{{ item.product.title }}</p>
+                  <p class="text-[10px] text-gray-500">Qty: {{ item.quantity }} × ₹{{ ((Number(item.product.pricePaise) || (Number(item.product.price) * 100)) / 100).toFixed(2) }}</p>
+                </div>
+                <div class="text-xs font-bold whitespace-nowrap">
+                  ₹{{ ((Number(item.product.pricePaise || 0) * item.quantity || (Number(item.product.price || 0) * 100 * item.quantity)) / 100).toFixed(2) }}
+                </div>
+              </div>
+            </div>
 
             <div class="h-px bg-gray-200 dark:bg-gray-700 my-3"></div>
-
 
             <h3 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Order Summary</h3>
             <div class="space-y-1.5 mb-3 text-xs">
               <div class="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Subtotal</span>
-                <span>₹{{ totalAmount.toFixed(2) }}</span>
+                <span>₹{{ subtotal.toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Tax (10%)</span>
@@ -261,93 +225,115 @@
             </div>
 
           </div>
-        </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useCartStore } from '@/stores/cartStore'
-import { useOrderStore } from '@/stores/orderStore'
-import { useToast } from 'vue-toastification'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from "vue";
+import { useCartStore } from "@/stores/cartStore";
+import { useOrderStore } from "@/stores/orderStore";
+import { useToast } from "vue-toastification";
+import { useRouter } from "vue-router";
 
-const toast = useToast()
-const router = useRouter()
-const cartStore = useCartStore()
-const orderStore = useOrderStore()
+const toast = useToast();
+const router = useRouter();
+const cartStore = useCartStore();
+const orderStore = useOrderStore();
 
 const form = ref({
-  name: '',
-  email: '',
-  phone: '',
-  address: '',
-  city: '',
-  state: '',
-  postalCode: ''
-})
+  name: "KusalKumar",
+  email: "[EMAIL_ADDRESS]",
+  phone: "9876543210",
+  address: "123 Main St",
+  city: "Bangalore",
+  state: "Karnataka",
+  postalCode: "560001",
+});
 
-const paymentMethod = ref('cod')
+const paymentMethod = ref("COD");
 
-onMounted(() => {
-  cartStore.fetchCart()
-})
+onMounted(async () => {
+  await cartStore.fetchCart();
+});
 
-const cartItems = computed(() => cartStore.cart.items)
-const totalAmount = computed(() =>
-  cartItems.value.reduce((sum, item) => sum + item.product.price*3 * item.quantity, 0)
-)
-const tax = computed(() => totalAmount.value * 0.1)
-const shipping = computed(() => (cartItems.value.length > 0 ? 10 : 0))
-const total = computed(() => totalAmount.value + tax.value + shipping.value)
+/* =======================
+   DISPLAY-ONLY COMPUTEDS
+======================= */
+// const cartItems = computed(() => cartStore.cart.items);
 
+// backend is source of truth
+const subtotal = computed(() => (cartStore.cart.totalPaise / 100));
+const tax = computed(() => subtotal.value * 0.1);
+const shipping = computed(() => (cartStore.cart.items.length > 0 ? 10 : 0));
+const total = computed(() => subtotal.value + tax.value + shipping.value);
+
+/* =======================
+   PLACE ORDER FLOW
+======================= */
 const placeOrder = async () => {
-  if (!form.value.name || !form.value.address || !form.value.phone || !form.value.city || !form.value.state || !form.value.postalCode) {
-    toast.error('Please fill in all checkout details.', {
+  if (
+    !form.value.name ||
+    !form.value.address ||
+    !form.value.phone ||
+    !form.value.city ||
+    !form.value.state ||
+    !form.value.postalCode
+  ) {
+    toast.error("Please fill in all checkout details.", {
       timeout: 2500,
-      position: 'top-right',
-    })
-    return
+      position: "top-right",
+    });
+    return;
   }
-
 
   const shippingAddress = {
     name: form.value.name,
     phone: form.value.phone,
     address: form.value.address,
     city: form.value.city,
-    state: form.value.state, 
-    pincode: form.value.postalCode
-  }
+    state: form.value.state,
+    pincode: form.value.postalCode,
+  };
 
   try {
-    const order = await orderStore.placeOrder(shippingAddress, paymentMethod.value)
-    
+    // 1️⃣ Create Order
+    const order = await orderStore.placeOrder(
+      shippingAddress,
+      paymentMethod.value
+    );
 
-    toast.success(`Order placed successfully! Order ID: ${order._id}`, {
+    // 2️⃣ Success → Show toast and redirect
+    toast.success(`Order placed successfully!`, {
       timeout: 3000,
-      position: 'top-right',
-    })
-    
+      position: "top-right",
+    });
 
-    await cartStore.fetchCart()
-
-    setTimeout(() => {
-      router.push(`/`)
-    }, 1000)
-
-  } catch {
-    toast.error(orderStore.error || 'Failed to place order', {
-      timeout: 3000,
-      position: 'top-right',
-    })
+    await cartStore.fetchCart();
+    router.push(`/orders/${order._id}`);
+  } catch (err) {
+    console.error(err);
+    toast.error(
+      orderStore.error || "Failed to place order. Please try again.",
+      { timeout: 3000 }
+    );
   }
-}
+};
 </script>
 
 <style scoped>
-
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+}
 </style>

@@ -15,16 +15,21 @@ const orderItemSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    price: {
+
+    // PRICE PER UNIT — STORED IN PAISE
+    pricePaise: {
       type: Number,
       required: true,
     },
+
     quantity: {
       type: Number,
       required: true,
       min: 1,
     },
-    totalPrice: {
+
+    // pricePaise * quantity
+    totalPricePaise: {
       type: Number,
       required: true,
     },
@@ -39,26 +44,47 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     orderItems: [orderItemSchema],
-    totalPrice: {
+
+    // FINAL ORDER TOTAL — AUTHORITATIVE
+    totalAmountPaise: {
       type: Number,
       required: true,
     },
+
     paymentMethod: {
       type: String,
-      enum: ["COD", "card", "upi"],
+      enum: ["COD"],
       default: "COD",
     },
+
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "failed"],
       default: "pending",
     },
+
+    taxPaise: {
+      type: Number,
+      default: 0,
+    },
+
+    shippingPaise: {
+      type: Number,
+      default: 0,
+    },
+
+    paidAt: {
+      type: Date,
+    },
+
     orderStatus: {
       type: String,
       enum: ["placed", "processing", "shipped", "delivered", "cancelled"],
       default: "placed",
     },
+
     shippingAddress: {
       name: { type: String, required: true },
       phone: { type: String, required: true },
@@ -68,9 +94,7 @@ const orderSchema = new mongoose.Schema(
       pincode: { type: String, required: true },
     },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
 export const OrderModel = mongoose.model("Order", orderSchema);

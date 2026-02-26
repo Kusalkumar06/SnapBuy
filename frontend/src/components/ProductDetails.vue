@@ -75,9 +75,9 @@
   })
   
   const offerPrice = computed(() => {
-    return (productDetails.value?.price*3).toFixed(2) 
+    return ((Number(productDetails.value?.pricePaise) / 100) || Number(productDetails.value?.price || 0)).toFixed(2) 
   })
   const productPrice = computed(() => {
-    return  (productDetails.value?.price*4).toFixed(2)
+    return  (((Number(productDetails.value?.pricePaise) / 100) || Number(productDetails.value?.price || 0))*1.33).toFixed(2)
   })
 </script>

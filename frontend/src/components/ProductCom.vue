@@ -51,7 +51,7 @@
   }
 
   products = products.filter(
-    p => p.price*3 >= (filters.minPrice || 0) && p.price*3 <= (filters.maxPrice || Infinity)
+    p => p.price >= (filters.minPrice || 0) && p.price <= (filters.maxPrice || Infinity)
   )
 
   if (filters.rating) {
