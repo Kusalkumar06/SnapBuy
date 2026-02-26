@@ -13,11 +13,11 @@
       Your wishlist is empty 💔 
     </div>
 
-    <div v-else class="flex flex-wrap gap-6">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <div v-for="product in wishlist" :key="product._id" class="rounded-lg shadow-lg pb-2 flex flex-col">
         <router-link :to="{name:'productDetails', params:{id: product._id}}">
           <div class="relative">
-            <img :src="product.image" class="w-70 h-56 rounded-lg group-hover:scale-110 object-cover transition-transform duration-500" />
+            <img :src="product.image" class="w-full h-56 rounded-lg group-hover:scale-110 object-cover transition-transform duration-500" />
             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-hover:scale-110 transition-transform duration-300"></div>
           </div>
           <div class="px-4 pt-5">

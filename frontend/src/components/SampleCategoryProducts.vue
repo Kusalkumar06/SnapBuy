@@ -11,7 +11,7 @@
 
 <template>
   <div v-if="!productStore.loading">
-    <div class="flex flex-wrap justify-between gap-6">    
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">    
       <div  v-for="p in productStore.getProductsByCategory(category)" :key="p" >
         <ProductCard :productDetails="p"/>
       </div>

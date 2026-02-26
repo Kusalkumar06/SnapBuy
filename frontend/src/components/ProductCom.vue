@@ -11,7 +11,7 @@
       </div>
     </div>
     <div v-else>
-      <div class="flex flex-wrap justify-between gap-4 my-5">
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 my-5">
         <ProductCard v-for="product in paginatedProducts" :key="product._id" :productDetails="product"/>
       </div>
 

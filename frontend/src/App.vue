@@ -32,8 +32,12 @@
     <div v-if="showNavbar">
       <Navbar/>
     </div>
-    <div :class="{ 'mt-[60px]': giveTopMargin }">
-      <router-view></router-view>
+    <div :class="{ 'mt-[60px]': giveTopMargin }" class="flex-1">
+      <router-view v-slot="{ Component }">
+        <transition name="page" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </div>
     <div v-if="showFooter">
       <FooterCom/>

@@ -6,39 +6,40 @@
         
 
         <aside class="w-full md:w-64 shrink-0">
-          <div class="bg-white dark:bg-[#1A1D2D] rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 sticky top-24">
-            <div class="flex items-center gap-3 px-4 py-4 mb-4 border-b border-gray-100 dark:border-gray-700">
-              <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg">
-                {{ userStore.user?.username?.charAt(0).toUpperCase() || 'U' }}
+          <div class="bg-white dark:bg-[#1A1D2D] rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 md:sticky md:top-24">
+            <div class="flex items-center justify-between px-4 py-4 mb-4 border-b border-gray-100 dark:border-gray-700">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-10 h-10 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg">
+                  {{ userStore.user?.username?.charAt(0).toUpperCase() || 'U' }}
+                </div>
+                <div class="overflow-hidden">
+                  <p class="font-bold truncate">{{ userStore.user?.username || 'User' }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ userStore.user?.email }}</p>
+                </div>
               </div>
-              <div class="overflow-hidden">
-                <p class="font-bold truncate">{{ userStore.user?.username || 'User' }}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ userStore.user?.email }}</p>
-              </div>
+              <button 
+                @click="handleLogout"
+                title="Logout"
+                class="shrink-0 p-2 rounded-full text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+              >
+                <LogOut class="w-5 h-5" />
+              </button>
             </div>
 
-            <nav class="space-y-1">
+            <nav class="flex flex-row overflow-x-auto whitespace-nowrap md:flex-col gap-2 pb-2 custom-scrollbar">
               <button 
                 v-for="tab in tabs" 
                 :key="tab.id"
                 @click="currentTab = tab.id"
                 :class="[
-                  'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium',
+                  'flex items-center gap-2 px-4 py-3 rounded-xl transition-all text-sm font-medium shrink-0 md:w-full',
                   currentTab === tab.id 
                     ? 'bg-black text-white dark:bg-white dark:text-black shadow-lg' 
                     : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                 ]"
               >
-                <component :is="tab.icon" class="w-5 h-5" />
+                <component :is="tab.icon" class="w-4 h-4 md:w-5 md:h-5" />
                 {{ tab.label }}
-              </button>
-
-              <button 
-                @click="handleLogout"
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 mt-4"
-              >
-                <LogOut class="w-5 h-5" />
-                Logout
               </button>
             </nav>
           </div>
@@ -116,9 +117,10 @@
                 <div>
                   <label class="block text-sm font-medium mb-2">Current Password</label>
                   <div class="relative">
-                     <input 
+                    <input 
                       v-model="passwordForm.currentPassword" 
                       :type="showCurrentPassword ? 'text' : 'password'"
+                      autocomplete="current-password"
                       class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                       required
                     />
@@ -134,6 +136,7 @@
                     <input 
                       v-model="passwordForm.newPassword" 
                       :type="showNewPassword ? 'text' : 'password'"
+                      autocomplete="new-password"
                       class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                       required
                       minlength="6"
@@ -149,6 +152,7 @@
                   <input 
                     v-model="passwordForm.confirmPassword" 
                     type="password" 
+                    autocomplete="new-password"
                     class="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                     required
                   />
@@ -236,65 +240,63 @@
         </main>
       </div>
     </div>
-  </div>
 
+    <!-- Move modal inside the main div or use a single root wrapper -->
+    <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div @click="showDeleteModal = false" class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"></div>
+      
+      <div class="bg-white dark:bg-[#1A1D2D] rounded-3xl max-w-md w-full p-6 shadow-2xl z-10 relative border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in duration-200">
+        <button @click="showDeleteModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <X class="w-5 h-5" />
+        </button>
 
-  <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-
-    <div @click="showDeleteModal = false" class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"></div>
-    
-
-    <div class="bg-white dark:bg-[#1A1D2D] rounded-3xl max-w-md w-full p-6 shadow-2xl z-10 relative border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in duration-200">
-      <button @click="showDeleteModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-        <X class="w-5 h-5" />
-      </button>
-
-      <div class="text-center mb-6">
-        <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600 dark:text-red-500">
-          <AlertTriangle class="w-8 h-8" />
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600 dark:text-red-500">
+            <AlertTriangle class="w-8 h-8" />
+          </div>
+          <h3 class="text-xl font-bold mb-2">Delete Account?</h3>
+          <p class="text-gray-500 dark:text-gray-400 text-sm">
+            This action is irreversible. Please enter your password to confirm deletion.
+          </p>
         </div>
-        <h3 class="text-xl font-bold mb-2">Delete Account?</h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">
-          This action is irreversible. Please enter your password to confirm deletion.
-        </p>
-      </div>
 
-      <form @submit.prevent="handleDeleteAccount" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium mb-1.5 ml-1">Password</label>
-           <div class="relative">
-            <input 
-              v-model="deletePassword" 
-              :type="showDeletePassword ? 'text' : 'password'"
-              class="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
-              placeholder="Enter your password"
-              required
-            />
-            <button type="button" @click="showDeletePassword = !showDeletePassword" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-              <Eye v-if="showDeletePassword" class="w-5 h-5" />
-              <EyeOff v-else class="w-5 h-5" />
+        <form @submit.prevent="handleDeleteAccount" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1.5 ml-1">Password</label>
+            <div class="relative">
+              <input 
+                v-model="deletePassword" 
+                :type="showDeletePassword ? 'text' : 'password'"
+                class="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
+                placeholder="Enter your password"
+                required
+              />
+              <button type="button" @click="showDeletePassword = !showDeletePassword" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <Eye v-if="showDeletePassword" class="w-5 h-5" />
+                <EyeOff v-else class="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button 
+              type="button" 
+              @click="showDeleteModal = false"
+              class="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all is-active"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              :disabled="userStore.loading"
+              class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <span v-if="userStore.loading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              <span v-else>Confirm Delete</span>
             </button>
           </div>
-        </div>
-
-        <div class="flex gap-3 pt-2">
-          <button 
-            type="button" 
-            @click="showDeleteModal = false"
-            class="flex-1 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all is-active"
-          >
-            Cancel
-          </button>
-          <button 
-            type="submit" 
-            :disabled="userStore.loading"
-            class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            <span v-if="userStore.loading" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-            <span v-else>Confirm Delete</span>
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </template>

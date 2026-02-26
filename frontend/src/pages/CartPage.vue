@@ -1,8 +1,9 @@
 <template>
-  <div v-if="isCartOpen" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" @click="closeCart"></div>
+  <Teleport to="body">
+    <div v-if="isCartOpen" class="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm" @click="closeCart"></div>
 
-  <transition name="slide">
-    <div v-if="isCartOpen" class="absolute right-0 top-0 h-screen w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl flex flex-col z-50 transition-colors duration-300" @click.stop>
+    <transition name="slide">
+      <div v-if="isCartOpen" class="fixed right-0 top-0 h-screen w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl flex flex-col z-110 transition-colors duration-300" @click.stop>
 
       <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
         <h2 class="text-xl font-bold text-gray-900 dark:text-white">Shopping Cart</h2>
@@ -54,18 +55,31 @@
           <button class="w-[45%] border dark:border-gray-600 py-1 rounded text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition" @click="cartStore.clearCart">clear Cart</button>
         </div>
       </div>
-    </div>
-  </transition>
+      </div>
+    </transition>
+  </Teleport>
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore.js'
-import { computed,onMounted,provide,ref } from 'vue'
+import { computed, onMounted, provide, ref, watch, onUnmounted } from 'vue'
 import { Trash,ShoppingCart } from 'lucide-vue-next'
 
 const cartStore = useCartStore()
 const { cart, isCartOpen } = storeToRefs(cartStore)
+
+watch(isCartOpen, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
+onUnmounted(() => {
+  document.body.style.overflow = ''
+})
 
 function closeCart() { cartStore.closeCart() }
 function checkout() { cartStore.closeCart() }
