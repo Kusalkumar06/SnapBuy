@@ -59,16 +59,20 @@ export const createOrder = async (req, res) => {
       shippingAddress,
       paymentMethod: paymentMethod || "COD",
       paymentStatus: "pending",
-      orderStatus: "placed",
+      orderStatus: paymentMethod === "Razorpay" ? "pending_payment" : "placed",
     });
 
     const savedOrder = await newOrder.save();
 
-    // Clear cart after successful order
-    await CartModel.updateOne(
-      { user: userId },
-      { $set: { items: [], totalPaise: 0 } },
-    );
+    // Deferred cart clearing:
+    // If COD, clear immediately. 
+    // If Razorpay, do NOT clear cart yet. It must remain intact until payment verification.
+    if (paymentMethod !== "Razorpay") {
+      await CartModel.updateOne(
+        { user: userId },
+        { $set: { items: [], totalPaise: 0 } },
+      );
+    }
 
     res.status(201).json({
       success: true,

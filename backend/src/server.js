@@ -9,6 +9,7 @@ import cartRouter from "./routes/cartRoutes.js";
 import wishListRouter from "./routes/wishListRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import paymentRouter from "./routes/paymentRoutes.js";
 const app = express();
 
 app.use(
@@ -16,6 +17,18 @@ app.use(
     origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
     credentials: true,
   }),
+);
+
+// Specific path raw body parser for Webhooks
+app.use(
+  "/payments/webhook", 
+  express.raw({ type: "application/json" }),
+  (req, res, next) => {
+    if (req.body && Buffer.isBuffer(req.body)) {
+      req.rawBody = req.body;
+    }
+    next();
+  }
 );
 
 app.use(express.json());
@@ -54,3 +67,24 @@ app.use("/wishlist", wishListRouter);
 app.use("/user", userRouter);
 
 app.use("/orders", orderRouter);
+
+app.use("/payments", paymentRouter);
+
+import { OrderModel } from "./models/orderModel.js";
+
+// Setup Cron Job for stale pending_payment orders
+setInterval(async () => {
+  try {
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    // Find orders stuck in pending_payment for more than 10 minutes
+    const result = await OrderModel.updateMany(
+      { orderStatus: "pending_payment", createdAt: { $lt: tenMinutesAgo } },
+      { $set: { orderStatus: "expired", paymentStatus: "failed" } }
+    );
+    if (result.modifiedCount > 0) {
+      console.log(`Cleanup Job: Cancelled ${result.modifiedCount} stale pending orders.`);
+    }
+  } catch (error) {
+    console.error("Cleanup Job Error:", error);
+  }
+}, 15 * 60 * 1000); // Run every 15 minutes

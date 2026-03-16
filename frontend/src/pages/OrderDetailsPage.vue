@@ -34,14 +34,39 @@
             </div>
             <div class="flex flex-col items-end">
                <span :class="{
-                  'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400': orderStore.currentOrder.orderStatus === 'processing',
+                  'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400': ['processing', 'pending_payment'].includes(orderStore.currentOrder.orderStatus),
                   'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400': orderStore.currentOrder.orderStatus === 'shipped',
                   'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400': orderStore.currentOrder.orderStatus === 'delivered',
-                  'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400': orderStore.currentOrder.orderStatus === 'cancelled'
+                  'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400': ['cancelled', 'payment_failed', 'expired'].includes(orderStore.currentOrder.orderStatus)
                 }" class="px-3 py-1 rounded-full text-sm font-bold capitalize mb-2">
-                  {{ orderStore.currentOrder.orderStatus }}
+                  {{ orderStore.currentOrder.orderStatus.replace('_', ' ') }}
                 </span>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Placed on {{ formatDate(orderStore.currentOrder.createdAt) }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Placed on {{ formatDate(orderStore.currentOrder.createdAt) }}</p>
+                <button
+                  v-if="['pending_payment', 'payment_failed'].includes(orderStore.currentOrder.orderStatus) && orderStore.currentOrder.paymentMethod === 'Razorpay'"
+                  @click="retryPayment"
+                  class="px-5 py-2 mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
+                >
+                  Retry Payment
+                </button>
+            </div>
+          </div>
+
+          <div v-if="!['cancelled', 'payment_failed', 'expired', 'pending_payment'].includes(orderStore.currentOrder.orderStatus)" class="mb-8 mt-6">
+            <div class="flex items-center justify-between relative px-2">
+              <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 dark:bg-gray-700 z-0"></div>
+              <div class="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-blue-500 z-0 transition-all duration-500" :style="{ width: progressWidth }"></div>
+              
+              <div v-for="(step, index) in steps" :key="step.key" class="relative z-10 flex flex-col items-center">
+                <div 
+                  class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-300 border-4 border-white dark:border-[#1A1D2D]"
+                  :class="getCurrentStepIndex >= index ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-400 dark:bg-gray-700'"
+                >
+                  <svg v-if="getCurrentStepIndex > index" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  <span v-else>{{ index + 1 }}</span>
+                </div>
+                <span class="text-[10px] sm:text-xs font-bold mt-2 capitalize whitespace-nowrap" :class="getCurrentStepIndex >= index ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'">{{ step.label }}</span>
+              </div>
             </div>
           </div>
 
@@ -135,13 +160,15 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
+import { useToast } from 'vue-toastification'
 
 const route = useRoute()
 const router = useRouter()
 const orderStore = useOrderStore()
+const toast = useToast()
 
 const fetchDetails = () => {
   const orderId = route.params.id
@@ -154,6 +181,24 @@ onMounted(() => {
   fetchDetails()
 })
 
+const steps = [
+  { key: 'placed', label: 'Placed' },
+  { key: 'processing', label: 'Processing' },
+  { key: 'shipped', label: 'Shipped' },
+  { key: 'delivered', label: 'Delivered' }
+];
+
+const getCurrentStepIndex = computed(() => {
+  return steps.findIndex(s => s.key === orderStore.currentOrder?.orderStatus);
+});
+
+const progressWidth = computed(() => {
+  const index = getCurrentStepIndex.value;
+  if (index <= 0) return '0%';
+  if (index >= steps.length - 1) return '100%';
+  return `${(index / (steps.length - 1)) * 100}%`;
+});
+
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('en-US', {
     weekday: 'long',
@@ -161,5 +206,63 @@ const formatDate = (dateString) => {
     month: 'long',
     day: 'numeric'
   })
+}
+
+const retryPayment = async () => {
+  try {
+    const rzpData = await orderStore.createRazorpayOrder(orderStore.currentOrder._id);
+    
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
+      amount: rzpData.amount, 
+      currency: "INR",
+      name: "SnapBuy",
+      description: "Secure Payment Retry",
+      order_id: rzpData.rzpOrderId,
+      handler: async function (response) {
+        try {
+          await orderStore.verifyRazorpayPayment({
+            orderId: orderStore.currentOrder._id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          });
+          toast.success("Payment successful!", { timeout: 3000, position: "top-right" });
+          fetchDetails(); // Reload data
+        // eslint-disable-next-line no-unused-vars
+        } catch (_err) {
+          toast.error("Payment verification failed.", { timeout: 3000 });
+        }
+      },
+      prefill: {
+        name: orderStore.currentOrder.shippingAddress?.name || "",
+        contact: orderStore.currentOrder.shippingAddress?.phone || "",
+      },
+      theme: { color: "#3B82F6" },
+      config: {
+        display: {
+          blocks: {
+            banks: {
+              name: 'All payment methods',
+              instruments: [{ method: 'upi' }, { method: 'card' }, { method: 'wallet' }, { method: 'netbanking' }],
+            },
+          },
+          sequence: ['block.banks'],
+          preferences: { show_default_blocks: true },
+        },
+      }
+    };
+
+    const rzp1 = new window.Razorpay(options);
+    // eslint-disable-next-line no-unused-vars
+    rzp1.on('payment.failed', function (_response){
+      toast.error("Payment failed. Please try again.", { timeout: 3000 });
+      fetchDetails(); // Reload to pick up failed status
+    });
+    rzp1.open();
+  } catch (err) {
+    console.error("Retry Payment Error:", err);
+    toast.error("Failed to initialize payment.", { timeout: 3000 });
+  }
 }
 </script>

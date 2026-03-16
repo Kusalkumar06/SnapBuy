@@ -154,14 +154,33 @@
                 <span class="w-1 h-5 bg-blue-600 dark:bg-blue-500 rounded-full"></span>
                 Order Method
               </h2>
-              <div class="flex items-center gap-3 p-3 bg-blue-50/50 dark:bg-blue-500/10 rounded-xl border-2 border-blue-600 dark:border-blue-500">
-                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                </div>
-                <div>
-                  <span class="font-semibold text-sm block">Cash on Delivery</span>
-                  <span class="text-[10px] text-gray-500 dark:text-gray-400">Pay when your order arrives</span>
-                </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <!-- COD -->
+                <label class="relative flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                       :class="paymentMethod === 'COD' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-500/10' : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
+                  <input type="radio" value="COD" v-model="paymentMethod" class="sr-only" />
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                       :class="paymentMethod === 'COD' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'">
+                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                  </div>
+                  <div>
+                    <span class="font-semibold text-sm block">Cash on Delivery</span>
+                    <span class="text-[10px] text-gray-500 dark:text-gray-400">Pay when order arrives</span>
+                  </div>
+                </label>
+                <!-- Online -->
+                <label class="relative flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                       :class="paymentMethod === 'Razorpay' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-500/10' : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'">
+                  <input type="radio" value="Razorpay" v-model="paymentMethod" class="sr-only" />
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                       :class="paymentMethod === 'Razorpay' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'">
+                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                  </div>
+                  <div>
+                    <span class="font-semibold text-sm block">Online Payment</span>
+                    <span class="text-[10px] text-gray-500 dark:text-gray-400">Pay via Razorpay</span>
+                  </div>
+                </label>
               </div>
             </div>
 
@@ -304,14 +323,78 @@ const placeOrder = async () => {
       paymentMethod.value
     );
 
-    // 2️⃣ Success → Show toast and redirect
-    toast.success(`Order placed successfully!`, {
-      timeout: 3000,
-      position: "top-right",
-    });
+    if (paymentMethod.value === 'Razorpay') {
+      const rzpData = await orderStore.createRazorpayOrder(order._id);
+      
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, 
+        amount: rzpData.amount, 
+        currency: rzpData.currency,
+        name: "SnapBuy",
+        description: "Secure Payment",
+        order_id: rzpData.rzpOrderId,
+        handler: async function (response) {
+          try {
+            await orderStore.verifyRazorpayPayment({
+              orderId: order._id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            toast.success(`Payment successful! Order confirmed.`, { timeout: 3000, position: "top-right" });
+            await cartStore.fetchCart();
+            router.push(`/orders/${order._id}`);
+          // eslint-disable-next-line no-unused-vars
+          } catch (_err) {
+            toast.error("Payment verification failed or amount mismatch.", { timeout: 3000 });
+          }
+        },
+        prefill: {
+          name: form.value.name,
+          email: form.value.email,
+          contact: form.value.phone,
+        },
+        theme: {
+          color: "#3B82F6",
+        },
+        // Force the widget to display UPI
+        config: {
+          display: {
+            blocks: {
+              banks: {
+                name: 'All payment methods',
+                instruments: [
+                  { method: 'upi' },
+                  { method: 'card' },
+                  { method: 'wallet' },
+                  { method: 'netbanking' }
+                ],
+              },
+            },
+            sequence: ['block.banks'],
+            preferences: {
+              show_default_blocks: true,
+            },
+          },
+        }
+      };
 
-    await cartStore.fetchCart();
-    router.push(`/orders/${order._id}`);
+      const rzp1 = new window.Razorpay(options);
+      // eslint-disable-next-line no-unused-vars
+      rzp1.on('payment.failed', function (_response){
+        toast.error("Payment failed. Please try again.", { timeout: 3000 });
+      });
+      rzp1.open();
+    } else {
+      // 2️⃣ Success → Show toast and redirect
+      toast.success(`Order placed successfully!`, {
+        timeout: 3000,
+        position: "top-right",
+      });
+
+      await cartStore.fetchCart();
+      router.push(`/orders/${order._id}`);
+    }
   } catch (err) {
     console.error(err);
     toast.error(
