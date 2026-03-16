@@ -132,13 +132,15 @@ export const webhookHandler = async (req, res) => {
 
     // Use req.rawBody provided by our custom express middleware
     if (!req.rawBody) {
-      console.error("Webhook: rawBody not found. Cannot verify signature.");
-      return res.status(400).json({ message: "rawBody not found" });
+      console.warn("Webhook: req.rawBody not found. Make sure express.json({verify: ...}) is configured for this route.");
+      // Fallback to stringifying if rawBody isn't available, but this is less secure
     }
+
+    const payloadString = req.rawBody ? req.rawBody : JSON.stringify(req.body);
 
     const expectedSignature = crypto
       .createHmac("sha256", secret)
-      .update(req.rawBody)
+      .update(payloadString)
       .digest("hex");
 
     if (expectedSignature !== signature) {

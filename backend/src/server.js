@@ -22,13 +22,7 @@ app.use(
 // Specific path raw body parser for Webhooks
 app.use(
   "/payments/webhook", 
-  express.raw({ type: "application/json" }),
-  (req, res, next) => {
-    if (req.body && Buffer.isBuffer(req.body)) {
-      req.rawBody = req.body;
-    }
-    next();
-  }
+  express.json({ verify: (req, res, buf) => { req.rawBody = buf; } })
 );
 
 app.use(express.json());

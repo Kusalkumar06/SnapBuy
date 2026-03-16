@@ -43,7 +43,7 @@
                 </span>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Placed on {{ formatDate(orderStore.currentOrder.createdAt) }}</p>
                 <button
-                  v-if="['pending_payment', 'payment_failed'].includes(orderStore.currentOrder.orderStatus) && orderStore.currentOrder.paymentMethod === 'Razorpay'"
+                  v-if="['pending_payment', 'payment_failed'].includes(orderStore.currentOrder.orderStatus) && orderStore.currentOrder.paymentMethod === 'Razorpay' && orderStore.currentOrder.paymentStatus !== 'verifying'"
                   @click="retryPayment"
                   class="px-5 py-2 mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
                 >
