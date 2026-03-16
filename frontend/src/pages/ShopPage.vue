@@ -1,18 +1,16 @@
 <template>
 
-  <div class="px-4 lg:px-35 bg-gray-200 dark:bg-gray-950 py-10 min-h-screen transition-colors duration-300">
-    <div>
-      <h1 class="text-[38px] font-bold dark:text-white">Shop All Products</h1>
-      <p class="text-stone-600 dark:text-gray-400 font">Discover our complete collection of premium items</p>
+  <div class="bg-gray-200 dark:bg-gray-950 py-10 min-h-screen transition-colors duration-300">
+    
+    <!-- Top Header Area - Featured Collection Title -->
+    <div class="px-4 lg:px-16 mb-2 pl-1">
+      <h1 class="text-[32px] lg:text-[42px] font-medium dark:text-white leading-tight">Featured Collection</h1>
+      <p class="text-stone-600 dark:text-gray-400">Explore our handpicked selection of premium items</p>
     </div>
-    <hr class="my-5 text-zinc-400 dark:text-gray-700"/>
-    <div class="flex flex-col lg:flex-row gap-6 lg:gap-0">
-      <div class="w-full lg:w-75">
-        <FilterCom/>
-      </div>
-      <div class="flex-1">
-        <ProductCom/>
-      </div>
+    
+    <!-- Product Grid - more space on left and right -->
+    <div class="px-4 lg:px-16 w-full my-4">
+      <ProductCom/>
     </div>
     
   </div>
@@ -21,7 +19,6 @@
 
 <script setup>
 import {reactive,provide,onMounted } from 'vue'
-import FilterCom from '@/components/FilterCom.vue'
 import ProductCom from '@/components/ProductCom.vue'
 import { useRoute } from 'vue-router'
 

@@ -1,8 +1,7 @@
 <template>
-  <div class="px-5">
-    <div>
-      <h1 class="text-[28px] font-medium">Featured Collection</h1>
-      <p class="text-[14px] text-zinc-600 font">Explore our handpicked selection of premium items</p>
+  <div class="">
+    <div class="">
+      <FilterCom />
     </div>
 
     <div v-if="paginatedProducts.length <=0">
@@ -11,7 +10,7 @@
       </div>
     </div>
     <div v-else>
-      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 my-5">
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 my-5">
         <ProductCard v-for="product in paginatedProducts" :key="product._id" :productDetails="product"/>
       </div>
 
@@ -29,13 +28,14 @@
   import { inject,computed,ref,watch } from 'vue';
   import { useProductStore } from '@/stores/productStore';
   import ProductCard from '@/components/ProductCard.vue';
+  import FilterCom from '@/components/FilterCom.vue';
 
 
 
   const productStore = useProductStore();
   const filters = inject('filters');
   const currentPage = ref(1)
-  const itemsPerPage = ref(6)
+  const itemsPerPage = ref(8)
 
   watch(currentPage, () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
