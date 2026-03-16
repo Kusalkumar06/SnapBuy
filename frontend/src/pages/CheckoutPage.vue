@@ -229,11 +229,13 @@
             </div>
 
 
-            <button @click="placeOrder" 
-              class="group w-full bg-black hover:bg-gray-900 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-black font-bold py-2.5 rounded-xl text-base transition-all duration-300 shadow-lg hover:shadow-xl dark:shadow-blue-500/20 active:scale-[0.98] flex items-center justify-center gap-2"
+            <button @click="placeOrder" :disabled="isPlacingOrder"
+              class="group w-full bg-black hover:bg-gray-900 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-black font-bold py-2.5 rounded-xl text-base transition-all duration-300 shadow-lg hover:shadow-xl dark:shadow-blue-500/20 flex items-center justify-center gap-2"
+              :class="isPlacingOrder ? 'opacity-70 cursor-not-allowed' : 'active:scale-[0.98]'"
             >
-              <span>Place Order</span>
-              <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              <span v-if="isPlacingOrder">Processing...</span>
+              <span v-else>Place Order</span>
+              <svg v-if="!isPlacingOrder" class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </button>
             
             <div class="text-center mt-2">
@@ -262,19 +264,24 @@ const cartStore = useCartStore();
 const orderStore = useOrderStore();
 
 const form = ref({
-  name: "KusalKumar",
-  email: "[EMAIL_ADDRESS]",
-  phone: "9876543210",
-  address: "123 Main St",
-  city: "Bangalore",
-  state: "Karnataka",
-  postalCode: "560001",
+  name: "",
+  email: "",
+  phone: "",
+  address: "",
+  city: "",
+  state: "",
+  postalCode: "",
 });
 
 const paymentMethod = ref("COD");
+const isPlacingOrder = ref(false);
 
 onMounted(async () => {
   await cartStore.fetchCart();
+  if (cartStore.cart.items.length === 0) {
+    toast.info("Your cart is empty. Redirecting to home.", { timeout: 2500 });
+    router.push("/");
+  }
 });
 
 /* =======================
@@ -292,6 +299,7 @@ const total = computed(() => subtotal.value + tax.value + shipping.value);
    PLACE ORDER FLOW
 ======================= */
 const placeOrder = async () => {
+  if (isPlacingOrder.value) return;
   if (
     !form.value.name ||
     !form.value.address ||
@@ -317,6 +325,7 @@ const placeOrder = async () => {
   };
 
   try {
+    isPlacingOrder.value = true;
     // 1️⃣ Create Order
     const order = await orderStore.placeOrder(
       shippingAddress,
@@ -401,6 +410,8 @@ const placeOrder = async () => {
       orderStore.error || "Failed to place order. Please try again.",
       { timeout: 3000 }
     );
+  } finally {
+    isPlacingOrder.value = false;
   }
 };
 </script>

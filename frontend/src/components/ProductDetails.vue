@@ -18,9 +18,15 @@
               <span class="font-medium text-lg">{{ cartStore.getItemById(productDetails._id).quantity }}</span>
               <button class="bg-black text-white dark:bg-white dark:text-black px-4 py-1 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition" @click="cartStore.addToCart(productDetails._id)">+</button>
             </div>
-            <button v-else type="button" @click="cartStore.addToCart(productDetails._id)" class="bg-black px-6 py-1 rounded-lg mt-2 text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition">Add to cart </button>
-            <button v-if="wishlistStore.wishlist.some(p => p._id === productDetails._id)" type="button" @click="wishlistStore.removeFromWishlist(productDetails._id)" class="px-6 py-1 border text-red-500 border-red-500 rounded-lg lg:mt-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition">Remove from Wishlist</button>
-            <button v-else type="button" @click="wishlistStore.addToWishlist(productDetails._id)" class="px-6 py-1 border text-black dark:text-white border-black dark:border-white rounded-lg lg:mt-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition">Add to Wishlist</button>
+            <button v-else type="button" @click="handleAddToCart" :disabled="isAddingToCart" :class="isAddingToCart ? 'opacity-70 cursor-not-allowed' : ''" class="bg-black px-6 py-1 rounded-lg mt-2 text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition">
+              {{ isAddingToCart ? 'Adding...' : 'Add to cart' }}
+            </button>
+            <button v-if="wishlistStore.wishlist.some(p => p._id === productDetails._id)" type="button" @click="handleRemoveFromWishlist" :disabled="isRemovingFromWishlist" :class="isRemovingFromWishlist ? 'opacity-70 cursor-not-allowed' : ''" class="px-6 py-1 border text-red-500 border-red-500 rounded-lg lg:mt-2 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+              {{ isRemovingFromWishlist ? 'Removing...' : 'Remove from Wishlist' }}
+            </button>
+            <button v-else type="button" @click="handleAddToWishlist" :disabled="isAddingToWishlist" :class="isAddingToWishlist ? 'opacity-70 cursor-not-allowed' : ''" class="px-6 py-1 border text-black dark:text-white border-black dark:border-white rounded-lg lg:mt-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition">
+              {{ isAddingToWishlist ? 'Adding...' : 'Add to Wishlist' }}
+            </button>
           </div>
         </div>
       </div>
@@ -56,7 +62,7 @@
   import { useProductStore } from '@/stores/productStore';
   import { useCartStore } from '@/stores/cartStore';
   import { useWishlistStore } from '@/stores/wishlistStore';
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
   import ReviewCom from './ReviewCom.vue';
   import ProductCard from './ProductCard.vue';
 
@@ -64,6 +70,40 @@
   const cartStore = useCartStore();
   const wishlistStore = useWishlistStore();
   const route = useRoute();
+
+  const isAddingToCart = ref(false);
+  const isAddingToWishlist = ref(false);
+  const isRemovingFromWishlist = ref(false);
+
+  const handleAddToCart = async () => {
+    if (isAddingToCart.value) return;
+    isAddingToCart.value = true;
+    try {
+      await cartStore.addToCart(productDetails.value._id);
+    } finally {
+      isAddingToCart.value = false;
+    }
+  };
+
+  const handleAddToWishlist = async () => {
+    if (isAddingToWishlist.value) return;
+    isAddingToWishlist.value = true;
+    try {
+      await wishlistStore.addToWishlist(productDetails.value._id);
+    } finally {
+      isAddingToWishlist.value = false;
+    }
+  };
+
+  const handleRemoveFromWishlist = async () => {
+    if (isRemovingFromWishlist.value) return;
+    isRemovingFromWishlist.value = true;
+    try {
+      await wishlistStore.removeFromWishlist(productDetails.value._id);
+    } finally {
+      isRemovingFromWishlist.value = false;
+    }
+  };
 
   const productDetails = computed(() => {
     return productStore.getProductById(route.params.id);

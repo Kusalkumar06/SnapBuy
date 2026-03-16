@@ -36,8 +36,12 @@
             <span class="font-medium dark:text-white">{{ cartStore.getItemById(product._id).quantity }}</span>
             <button class="bg-black text-white dark:bg-white dark:text-black px-3 py-1 rounded hover:bg-gray-800 dark:hover:bg-gray-200 transition" @click="cartStore.addToCart(product._id)">+</button>
           </div>
-          <button v-else type="button" @click="cartStore.addToCart(product._id)" class="bg-black text-white dark:bg-white dark:text-black px-6 py-1 rounded-lg mt-2 hover:bg-gray-800 dark:hover:bg-gray-200 transition">Add to cart</button>
-          <button class="mt-auto text-red-500 hover:text-white border dark:border-gray-600 py-1 hover:bg-red-600 transition rounded-lg" @click="wishlistStore.removeFromWishlist(product._id)">Remove from Wishlist</button>
+          <button v-else type="button" @click="handleAddToCart(product._id)" :disabled="addingToCartIds.has(product._id)" :class="addingToCartIds.has(product._id) ? 'opacity-70 cursor-not-allowed' : ''" class="bg-black text-white dark:bg-white dark:text-black px-6 py-1 rounded-lg mt-2 hover:bg-gray-800 dark:hover:bg-gray-200 transition">
+            {{ addingToCartIds.has(product._id) ? 'Adding...' : 'Add to cart' }}
+          </button>
+          <button @click="handleRemoveWishlist(product._id)" :disabled="removingWishlistIds.has(product._id)" :class="removingWishlistIds.has(product._id) ? 'opacity-70 cursor-not-allowed' : ''" class="mt-auto text-red-500 hover:text-white border dark:border-gray-600 py-1 hover:bg-red-600 transition rounded-lg">
+            {{ removingWishlistIds.has(product._id) ? 'Removing...' : 'Remove from Wishlist' }}
+          </button>
         </div>
       </div>
     </div>
@@ -45,17 +49,39 @@
 </template>
 
 <script setup>
-import { onMounted,computed } from 'vue';
+import { onMounted,computed,reactive } from 'vue';
 import { useWishlistStore } from '@/stores/wishlistStore';
 import { useCartStore } from '@/stores/cartStore';
 
 const wishlistStore = useWishlistStore();
 const cartStore = useCartStore();
 
+const addingToCartIds = reactive(new Set());
+const removingWishlistIds = reactive(new Set());
+
+const handleAddToCart = async (id) => {
+  if (addingToCartIds.has(id)) return;
+  addingToCartIds.add(id);
+  try {
+    await cartStore.addToCart(id);
+  } finally {
+    addingToCartIds.delete(id);
+  }
+};
+
+const handleRemoveWishlist = async (id) => {
+  if (removingWishlistIds.has(id)) return;
+  removingWishlistIds.add(id);
+  try {
+    await wishlistStore.removeFromWishlist(id);
+  } finally {
+    removingWishlistIds.delete(id);
+  }
+};
+
 const wishlist = computed(() => {
   return wishlistStore.wishlist
 })
-
 
 onMounted(() => {
   wishlistStore.fetchWishlist();

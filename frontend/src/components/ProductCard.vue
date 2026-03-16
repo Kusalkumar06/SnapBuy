@@ -1,4 +1,5 @@
 <script setup>
+  import { ref } from 'vue';
   import { useCartStore } from '@/stores/cartStore';
 
   const cartStore = useCartStore();
@@ -6,6 +7,18 @@
   const { productDetails } = defineProps({
     productDetails: Object,
   })
+
+  const isAdding = ref(false);
+
+  const handleAddToCart = async (id) => {
+    if (isAdding.value) return;
+    isAdding.value = true;
+    try {
+      await cartStore.addToCart(id);
+    } finally {
+      isAdding.value = false;
+    }
+  };
 </script>
 
 
@@ -30,9 +43,11 @@
         <div v-if="cartStore.getItemById(productDetails._id)" class="flex items-center justify-center gap-2 mt-2">
            <button class="bg-black text-white dark:bg-white dark:text-black px-2 sm:px-3 py-1 rounded hover:bg-gray-800 dark:hover:bg-gray-200 transition text-sm sm:text-base" @click="cartStore.decreaseCartItem(productDetails._id)">-</button>
            <span class="font-medium dark:text-gray-200 text-sm sm:text-base w-4 text-center">{{ cartStore.getItemById(productDetails._id).quantity }}</span>
-           <button class="bg-black text-white dark:bg-white dark:text-black px-2 sm:px-3 py-1 rounded hover:bg-gray-800 dark:hover:bg-gray-200 transition text-sm sm:text-base" @click="cartStore.addToCart(productDetails._id)">+</button>
+           <button class="bg-black text-white dark:bg-white dark:text-black px-2 sm:px-3 py-1 rounded hover:bg-gray-800 dark:hover:bg-gray-200 transition text-sm sm:text-base" @click="handleAddToCart(productDetails._id)">+</button>
         </div>
-        <button v-else type="button" @click="cartStore.addToCart(productDetails._id)" class="w-full sm:w-auto bg-black px-2 sm:px-6 py-1.5 sm:py-1 rounded-lg mt-2 text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition text-xs sm:text-base">Add to cart</button>
+        <button v-else type="button" @click="handleAddToCart(productDetails._id)" :disabled="isAdding" :class="isAdding ? 'opacity-70 cursor-not-allowed' : ''" class="w-full sm:w-auto bg-black px-2 sm:px-6 py-1.5 sm:py-1 rounded-lg mt-2 text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 transition text-xs sm:text-base cursor-pointer">
+          {{ isAdding ? 'Adding...' : 'Add to cart' }}
+        </button>
       </div>
     </div>
 

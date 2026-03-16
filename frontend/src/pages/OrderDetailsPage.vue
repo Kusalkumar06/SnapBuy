@@ -45,9 +45,11 @@
                 <button
                   v-if="['pending_payment', 'payment_failed'].includes(orderStore.currentOrder.orderStatus) && orderStore.currentOrder.paymentMethod === 'Razorpay' && orderStore.currentOrder.paymentStatus !== 'verifying'"
                   @click="retryPayment"
-                  class="px-5 py-2 mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95"
+                  :disabled="isRetryingPayment"
+                  :class="isRetryingPayment ? 'opacity-70 cursor-not-allowed' : 'active:scale-95 hover:shadow-md'"
+                  class="px-5 py-2 mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-sm flex items-center gap-2"
                 >
-                  Retry Payment
+                  {{ isRetryingPayment ? 'Processing...' : 'Retry Payment' }}
                 </button>
             </div>
           </div>
@@ -160,7 +162,7 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useOrderStore } from '@/stores/orderStore'
 import { useToast } from 'vue-toastification'
@@ -208,8 +210,12 @@ const formatDate = (dateString) => {
   })
 }
 
+const isRetryingPayment = ref(false);
+
 const retryPayment = async () => {
+  if (isRetryingPayment.value) return;
   try {
+    isRetryingPayment.value = true;
     const rzpData = await orderStore.createRazorpayOrder(orderStore.currentOrder._id);
     
     const options = {
@@ -258,11 +264,16 @@ const retryPayment = async () => {
     rzp1.on('payment.failed', function (_response){
       toast.error("Payment failed. Please try again.", { timeout: 3000 });
       fetchDetails(); // Reload to pick up failed status
+      isRetryingPayment.value = false;
+    });
+    rzp1.on('payment.modal.closed', function() {
+      isRetryingPayment.value = false;
     });
     rzp1.open();
   } catch (err) {
     console.error("Retry Payment Error:", err);
     toast.error("Failed to initialize payment.", { timeout: 3000 });
+    isRetryingPayment.value = false;
   }
 }
 </script>
